@@ -4,6 +4,7 @@ import {
   AsyncStorage,
   FlatList,
   StyleSheet,
+  TouchableOpacity,
   View
 } from "react-native";
 import InputField from "../components/inputField";
@@ -37,10 +38,10 @@ const getConversations = async (user:any, setLoading:any, setConversations:any) 
   }
 };
 
-const Chat = () => {
+const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const { user, setHeaderItem } = useContext(AuthContext);
 
   useEffect(() => {
     getConversations(user, setLoading, setConversations);
@@ -52,12 +53,20 @@ const Chat = () => {
         <ActivityIndicator />
       ) : (
         <View>
-          <InputField placeholder="Search" style={{ width: "100%" }} />
+          <InputField placeholder="Search" width="100%"/>
           <FlatList
             data={conversations}
-            keyExtractor={({ id }, index) => id}
+            keyExtractor={( item:any ) => item.id.toString()}
             renderItem={({ item }: any) => (
-              <ListItem item={item} listType={"chats"} />
+              <TouchableOpacity
+                onPress={() => {
+                  setHeaderItem(item);
+                  navigation.navigate("Conversation", { item: item });
+                }}
+              >
+                <ListItem item={item} listType={"chats"} />
+              </TouchableOpacity>
+              
             )}
           />
         </View>

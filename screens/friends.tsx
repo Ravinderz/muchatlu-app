@@ -52,17 +52,17 @@ const Friend = ({ navigation }: any) => {
         <ActivityIndicator />
       ) : (
         <View>
-          <InputField placeholder="Search" style={{ width: "100%" }} />
+          <InputField placeholder="Search" width="100%" />
           <FlatList
             data={friends}
-            keyExtractor={({ id }, index) => id}
+            keyExtractor={(item:any) => item.id.toString()}
             renderItem={({ item }: any) => (
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("Profile", { item: item });
+                  navigation.navigate("FriendProfile", { item: item });
                 }}
               >
-                <ListItem item={item} listType={"friends"} on />
+                <ListItem item={item} listType={"friends"} />
               </TouchableOpacity>
             )}
           />

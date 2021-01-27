@@ -34,7 +34,6 @@ const getFriendRequests = async (
     );
 
     let json = await response.json();
-    console.log(json);
     setFriendRequests(json);
     setLoading(false);
   } catch (error) {
@@ -57,12 +56,12 @@ const FriendRequest = () => {
         <ActivityIndicator />
       ) : (
         <View>
-          <InputField placeholder="Search" style={{ width: "100%" }} />
+          <InputField placeholder="Search" width="100%" />
           <FlatList
             data={friendRequests}
-            keyExtractor={({ id }, index) => id}
+            keyExtractor={(item:any) => item.id.toString()}
             renderItem={({ item }: any) => (
-              <ListItem item={item} listType={"friendRequests"} />
+              <ListItem item={item} listType={"friendRequests"}/>
             )}
           />
         </View>

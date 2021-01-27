@@ -1,30 +1,27 @@
-import React, { Component } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    StyleSheet,
-    Text,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
 
-    TouchableOpacity, View
+  TouchableOpacity, View
 } from "react-native";
+import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
 
-class Profile extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    const item = props.route.params.item;
-    this.state = {
-      item: item,
-      loading: false,
-      userId: 1,
-    };
-  }
+const Profile = ({route}:any) => {
 
-  componentDidMount() {}
+  
+  const item = route.params.item;
+  const [loading, setLoading] = useState(true);
+  const { user } = useContext(AuthContext);
 
-  render() {
-    const loading = this.state.loading;
-    const item = this.state.item;
+  useEffect(() => {
+    setLoading(false);
+  }, [])
+
+  
     let temp = item.avatar.split("/");
     let name = temp[temp.length - 1].split(".")[0];
     const imgSrc = IMAGES[name];
@@ -48,7 +45,6 @@ class Profile extends Component<any, any> {
         )}
       </View>
     );
-  }
 }
 
 export default Profile;

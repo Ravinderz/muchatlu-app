@@ -5,7 +5,7 @@ export default function InputField(props: any) {
 
   return (
     <TextInput
-      style={[styles.input,props?.style]}
+      style={[styles.input]}
       {...props}
     />
   );

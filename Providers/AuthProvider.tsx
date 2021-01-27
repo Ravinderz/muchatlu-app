@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AsyncStorage } from "react-native";
 
-type User = null | {
+export type User = null | {
   id: number;
   username: string;
   email: string;
@@ -12,12 +12,18 @@ type User = null | {
 
 export const AuthContext = React.createContext<{
   user: User;
+  headerItem: any;
   login: (email: string, password: string) => void;
   logout: (userId: number) => void;
+  setHeaderItem: (item: any) => void;
+  
 }>({
   user: null,
+  headerItem: null,
   login: () => {},
   logout: () => {},
+  setHeaderItem:() => {}
+
 });
 
 interface AuthProviderProps {}
@@ -77,11 +83,13 @@ const login = async (email: string, password: string) => {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
+  const [headerItem, setHeaderItem] = useState<any>(null);
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        headerItem,
         login: (email, password) => {
           console.log("inside login retyurn method", email);
           console.log(password);
@@ -95,6 +103,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout: () => {
           AsyncStorage.removeItem("user");
         },
+        setHeaderItem: (item:any) => {
+          setHeaderItem(item);
+        }
       }}
     >
       {children}
