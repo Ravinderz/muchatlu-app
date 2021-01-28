@@ -95,7 +95,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log(password);
           authenticate(email,password).then((token) => {
             login(email,password).then((value:any) => {
-                console.log("valu", value);    
                 setUser(value);
               });
           });

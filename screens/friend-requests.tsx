@@ -59,9 +59,9 @@ const FriendRequest = () => {
           <InputField placeholder="Search" width="100%" />
           <FlatList
             data={friendRequests}
-            keyExtractor={(item:any) => item.id.toString()}
+            keyExtractor={(item: any) => item.id.toString()}
             renderItem={({ item }: any) => (
-              <ListItem item={item} listType={"friendRequests"}/>
+              <ListItem item={item} listType={"friendRequests"} />
             )}
           />
         </View>

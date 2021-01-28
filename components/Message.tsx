@@ -27,18 +27,10 @@ const get12HourFormat = (value: any) => {
 
 const Message = (props: any) => {
   const data = props.item;
-  //   const data = {
-  //     id: 1,
-  //     fromId: 1,
-  //     toId: 2,
-  //     message: "This is atext",
-  //     time: "2021-01-27T13:07:27Z"
-  //   };
   const { user } = useContext(AuthContext);
   const userId = user.id;
-
   const item = data;
-  const time = adjustForTimezone(item.time);
+  const time = adjustForTimezone(item.timestamp);
 
   return (
     <View
@@ -51,21 +43,28 @@ const Message = (props: any) => {
         style={{
           flex: 1,
           maxWidth: "80%",
-          alignSelf: item.fromId === userId ? "flex-end" : "flex-start",
-          backgroundColor: item.fromId === userId ? "#7E7E81" : "#6159E6",
+          alignSelf: item.userIdFrom === userId ? "flex-end" : "flex-start",
+          backgroundColor: item.userIdFrom === userId ? "#7E7E81" : "#6159E6",
           padding: 10,
-          paddingLeft:20,
-          paddingRight:20,
-          borderTopRightRadius:item.fromId === userId ? 0 : 15,
-          borderTopLeftRadius:item.fromId === userId ? 15 : 0,
-          borderBottomRightRadius:15,
-          borderBottomLeftRadius:15
+          paddingLeft: 20,
+          paddingRight: 20,
+          borderTopRightRadius: item.userIdFrom === userId ? 0 : 15,
+          borderTopLeftRadius: item.userIdFrom === userId ? 15 : 0,
+          borderBottomRightRadius: 15,
+          borderBottomLeftRadius: 15,
         }}
       >
         <Text style={{ fontSize: 14, marginBottom: 4, color: "#fff" }}>
           {item.message}
         </Text>
-        <Text style={{ fontSize: 12, marginBottom: 4, color: "rgba(255, 255, 255, 0.5)", alignSelf:"flex-end"}}>
+        <Text
+          style={{
+            fontSize: 12,
+            marginBottom: 4,
+            color: "rgba(255, 255, 255, 0.5)",
+            alignSelf: "flex-end",
+          }}
+        >
           {time}
         </Text>
       </View>

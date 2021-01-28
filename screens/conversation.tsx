@@ -1,124 +1,110 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
-import { KeyboardAvoidingView, View } from "react-native";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-  FlatList,
-  ScrollView,
-  TouchableOpacity
-} from "react-native-gesture-handler";
+  AsyncStorage,
+  DeviceEventEmitter,
+  KeyboardAvoidingView,
+  View
+} from "react-native";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import InputField from "../components/inputField";
 import Message from "../components/Message";
+import { AuthContext } from "../Providers/AuthProvider";
+import { SocketContext } from "../Providers/SocketProvider";
 
 interface conversationProps {}
 
-
-
-const Conversation = ({}) => {
-  const [text, setText] = useState('');
+const Conversation = ({ route }: any) => {
+  const item = route.params.item;
+  const [text, setText] = useState("");
   const [count, setCount] = useState(12);
   const [data, setData] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const { user } = useContext(AuthContext);
+  const { sendMessage } = useContext(SocketContext);
 
   useEffect(() => {
+    getConversation();
+  }, []);
 
-    let temp: any = [
-    {
-      id: 1,
-      fromId: 1,
-      toId: 2,
-      message: "Test message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 2,
-      fromId: 2,
-      toId: 1,
-      message: "How are you",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 3,
-      fromId: 1,
-      toId: 2,
-      message: "I am good ! so whats up this seems to be the long message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 4,
-      fromId: 2,
-      toId: 1,
-      message: "Test message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 5,
-      fromId: 1,
-      toId: 2,
-      message: "Test message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 6,
-      fromId: 2,
-      toId: 1,
-      message: "How are you",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 7,
-      fromId: 1,
-      toId: 2,
-      message: "I am good ! so whats up this seems to be the long message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 8,
-      fromId: 1,
-      toId: 2,
-      message: "Test message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 9,
-      fromId: 1,
-      toId: 2,
-      message: "I am good ! so whats up this seems to be the long message",
-      time: "2021-01-27T13:07:27Z",
-    },
-    {
-      id: 10,
-      fromId: 2,
-      toId: 1,
-      message: "Test message",
-      time: "2021-01-27T13:07:27Z",
-    }]
-
-    setData(temp);
-    
-
-  }, [])
-
-
-   
-  
-  const sendMessage = (text:string) => {
-    console.log(text);
-    let obj: any = {
-      id: count,
-      fromId: 2,
-      toId: 1,
-      message: text,
-      time: "2021-01-27T13:07:27Z",
+  const messageEvent = DeviceEventEmitter.addListener(
+    "MESSAGE-EVENT",
+    (msg: any) => {
+      let temp = [...data];
+      temp.push(msg);
+      setData(temp);
     }
+  );
+
+  const getConversation = async () => {
+    let url = `http://192.168.0.103:8080/getConversation/${item.userIdFrom}/${item.userIdTo}`;
+    console.log(url);
+    let tokenObj = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if (tokenObj !== null) {
+      storedToken = JSON.parse(tokenObj);
+    }
+
+    try {
+      let response = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken.token}`,
+        },
+      });
+
+      let json = await response.json();
+      setData(json.message);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const sendMsg = (text: string) => {
+    let date = new Date();
+    console.log(text);
+    let obj;
+    if (user.id === item.userIdFrom) {
+      obj = {
+        userIdFrom: user.id,
+        userIdTo: item.userIdTo,
+        usernameFrom: user.username,
+        avatarFrom: user.avatar,
+        usernameTo: item.usernameTo,
+        avatarTo: item.avatarTo,
+        message: text.trim(),
+        conversationId: item.id,
+        timestamp: new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000
+        ).toISOString(),
+      };
+    } else {
+      obj = {
+        userIdFrom: user.id,
+        userIdTo: item.userIdFrom,
+        usernameFrom: user.username,
+        avatarFrom: user.avatar,
+        usernameTo: item.usernameFrom,
+        avatarTo: item.avatarFrom,
+        message: text.trim(),
+        conversationId: item.id,
+        timestamp: new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000
+        ).toISOString(),
+      };
+    }
+
+    sendMessage(obj);
     let temp = [...data];
     temp.push(obj);
     setData(temp);
-    setCount(count+1);
-    setText('');
-  }
+    setCount(count + 1);
+    setText("");
+  };
 
-  const scrollRef:any = useRef(); 
-
+  const scrollRef: any = useRef();
 
   return (
     <KeyboardAvoidingView
@@ -126,18 +112,27 @@ const Conversation = ({}) => {
       keyboardVerticalOffset={-500}
       style={{ flex: 1, backgroundColor: "#fff" }}
     >
-      {/* <View style={{marginLeft:15, marginRight:15}}> */}
-      <ScrollView style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
-       ref={scrollRef}
-       onContentSizeChange={() => scrollRef.current?.scrollToEnd({animated: true})}>
-        <FlatList
-          data={data}
-          keyExtractor={(item: any) => item.id.toString()}
-          renderItem={({ item }: any) => (
-            <Message item={item} listType={"chats"} />
-          )}
-        />
-      </ScrollView>
+      {/* <View
+        style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
+        ref={scrollRef}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({ animated: true })
+        }
+      > */}
+      <FlatList
+        style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
+        ref={scrollRef}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({ animated: true })
+        }
+        data={data}
+        keyExtractor={(item: any, idx) =>
+          (item?.conversationId + idx).toString()
+        }
+        renderItem={({ item }: any) => (
+          <Message item={item} listType={"chats"} />
+        )}
+      />
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InputField
           placeholder="message"
@@ -153,8 +148,7 @@ const Conversation = ({}) => {
             backgroundColor: "#6159E6",
             borderRadius: 50,
           }}
-
-          onPress={() => sendMessage(text)}
+          onPress={() => sendMsg(text)}
         >
           <Ionicons
             name="paper-plane-outline"

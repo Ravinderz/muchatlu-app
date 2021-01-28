@@ -55,7 +55,7 @@ const Friend = ({ navigation }: any) => {
           <InputField placeholder="Search" width="100%" />
           <FlatList
             data={friends}
-            keyExtractor={(item:any) => item.id.toString()}
+            keyExtractor={(item: any) => item.id.toString()}
             renderItem={({ item }: any) => (
               <TouchableOpacity
                 onPress={() => {

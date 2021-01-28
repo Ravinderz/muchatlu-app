@@ -54,7 +54,10 @@ const ListItem = (props: any) => {
       </View>
     );
   } else if (listType && listType === "chats") {
-    let temp = item.avatarTo.split("/");
+    let temp =
+      user.id === item.userIdFrom
+        ? item.avatarTo.split("/")
+        : item.avatarFrom.split("/");
     let name = temp[temp.length - 1].split(".")[0];
     const imgSrc = IMAGES[name];
     const itemTime = adjustForTimezone(item.lastMessageTimestamp);
@@ -64,7 +67,7 @@ const ListItem = (props: any) => {
         <Image style={styles.avatar} source={imgSrc} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 4 }}>
-            {item.usernameTo}
+            {user.id === item.userIdFrom ? item.usernameTo : item.usernameFrom}
           </Text>
           <Text style={{ fontSize: 12, color: "#A4A4A4" }} numberOfLines={1}>
             {item?.lastMessageFrom}:{item.lastMessage}
@@ -98,10 +101,20 @@ const ListItem = (props: any) => {
               paddingLeft: 5,
               paddingRight: 5,
               fontSize: 12,
-              color: item.status === 'Accepted' ? "#017815" : item.status === 'Pending' ? "#FFb01c": "#ff4e4e",
+              color:
+                item.status === "Accepted"
+                  ? "#017815"
+                  : item.status === "Pending"
+                  ? "#FFb01c"
+                  : "#ff4e4e",
               borderWidth: 1,
-              borderColor:  item.status === 'Accepted' ? "#017815" : item.status === 'Pending' ? "#FFb01c": "#ff4e4e",
-              alignSelf:"flex-start"     
+              borderColor:
+                item.status === "Accepted"
+                  ? "#017815"
+                  : item.status === "Pending"
+                  ? "#FFb01c"
+                  : "#ff4e4e",
+              alignSelf: "flex-start",
             }}
           >
             {item?.status}

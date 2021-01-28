@@ -1,11 +1,13 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import InputField from "../components/inputField";
 import { AuthNavProps } from "../params/AuthParamList";
 
 export default function Register({navigation,route} : AuthNavProps<'Register'>) {
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding"
+    keyboardVerticalOffset={-500}>
+      <ScrollView>
       <View style={styles.logo}>
         <Image
           style={{
@@ -38,7 +40,8 @@ export default function Register({navigation,route} : AuthNavProps<'Register'>) 
       <View style={{justifyContent:'center',alignItems:'center', margin:20}}>
         <Text>Already a member ? <Text style={{color:'#6159E6'}} onPress={() => navigation.navigate('Login')}>Sign In</Text></Text>
       </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

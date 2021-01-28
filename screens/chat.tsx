@@ -11,41 +11,41 @@ import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
 import { AuthContext } from "../Providers/AuthProvider";
 
-const getConversations = async (user:any, setLoading:any, setConversations:any) => {
-  let tokenObj = await AsyncStorage.getItem("token");
-  let storedToken = null;
-  if (tokenObj !== null) {
-    storedToken = JSON.parse(tokenObj);
-  }
-
-  try {
-    let response = await fetch(
-      `http://192.168.0.103:8080/getUserConversations/${user.id}`,
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${storedToken.token}`,
-        },
-      }
-    );
-
-    let json = await response.json();
-    setConversations(json);
-    setLoading(false);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, setHeaderItem } = useContext(AuthContext);
 
   useEffect(() => {
-    getConversations(user, setLoading, setConversations);
+    getConversations();
   }, []);
+
+  const getConversations = async () => {
+    let tokenObj = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if (tokenObj !== null) {
+      storedToken = JSON.parse(tokenObj);
+    }
+
+    try {
+      let response = await fetch(
+        `http://192.168.0.103:8080/getUserConversations/${user.id}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken.token}`,
+          },
+        }
+      );
+
+      let json = await response.json();
+      setConversations(json);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
@@ -53,10 +53,10 @@ const Chat = ({ navigation }: any) => {
         <ActivityIndicator />
       ) : (
         <View>
-          <InputField placeholder="Search" width="100%"/>
+          <InputField placeholder="Search" width="100%" />
           <FlatList
             data={conversations}
-            keyExtractor={( item:any ) => item.id.toString()}
+            keyExtractor={(item: any) => item.id.toString()}
             renderItem={({ item }: any) => (
               <TouchableOpacity
                 onPress={() => {
@@ -66,7 +66,6 @@ const Chat = ({ navigation }: any) => {
               >
                 <ListItem item={item} listType={"chats"} />
               </TouchableOpacity>
-              
             )}
           />
         </View>
