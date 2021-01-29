@@ -12,6 +12,7 @@ import InputField from "../components/inputField";
 import { AuthNavProps } from "../params/AuthParamList";
 import { AuthContext } from "../Providers/AuthProvider";
 
+
 export default function Login({ navigation, route }: AuthNavProps<"Login">) {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("r@abc.com");

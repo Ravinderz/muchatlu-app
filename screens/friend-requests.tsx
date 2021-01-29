@@ -10,6 +10,7 @@ import {
 import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
 import { AuthContext } from "../Providers/AuthProvider";
+import { URI } from './../constants';
 
 const getFriendRequests = async (
   user: any,
@@ -24,7 +25,7 @@ const getFriendRequests = async (
 
   try {
     let response = await fetch(
-      `http://192.168.0.103:8080/getFriendRequests/${user.id}`,
+      `${URI.getFriendRequests}/${user.id}`,
       {
         headers: {
           Accept: "application/json",
@@ -56,7 +57,7 @@ const FriendRequest = () => {
   const getUserDetails = async (email: string, storedToken: any) => {
     try {
       let response = await fetch(
-        `http://192.168.0.103:8080/getUserDetails/${email}`,
+        `${URI.getUserDetails}/${email}`,
         {
           headers: {
             Accept: "application/json",
@@ -109,7 +110,7 @@ const FriendRequest = () => {
 
       try {
         let response = await fetch(
-          `http://192.168.0.103:8080/sendFriendRequest`,
+          URI.sendFriendRequest,
           {
             method: "POST",
             headers: {

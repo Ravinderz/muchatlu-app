@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { DeviceEventEmitter } from "react-native";
 import SockJS from "sockjs-client"; // Note this line
 import Stomp from "stompjs";
+import { URI } from './../constants';
 import { AuthContext } from "./AuthProvider";
 
 export const SocketContext = React.createContext<{
@@ -15,7 +16,7 @@ interface SocketProviderProps {}
 let stompClient: any;
 
 const connect = (user: any) => {
-  const serverUrl = `http://192.168.0.103:8080/chat?userId=${user.id}`;
+  const serverUrl = `${URI.socketConnect}?userId=${user.id}`;
   const ws = new SockJS(serverUrl);
   stompClient = Stomp.over(ws);
 

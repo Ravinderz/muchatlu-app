@@ -11,6 +11,7 @@ import InputField from "../components/inputField";
 import Message from "../components/Message";
 import { AuthContext } from "../Providers/AuthProvider";
 import { SocketContext } from "../Providers/SocketProvider";
+import { URI } from './../constants';
 
 interface conversationProps {}
 
@@ -37,7 +38,7 @@ const Conversation = ({ route }: any) => {
   );
 
   const getConversation = async () => {
-    let url = `http://192.168.0.103:8080/getConversation/${item.userIdFrom}/${item.userIdTo}`;
+    let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
     console.log(url);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;

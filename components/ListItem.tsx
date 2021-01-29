@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
+import { URI } from './../constants';
 
 const adjustForTimezone = (value: Date) => {
   if (value) {
@@ -112,7 +113,7 @@ const ListItem = (props: any) => {
       item.status = status;
       try {
         let response = await fetch(
-          `http://192.168.0.103:8080/updateFriendRequest`,
+          URI.updateFriendRequest,
           {
             method: "POST",
             headers: {

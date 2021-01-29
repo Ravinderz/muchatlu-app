@@ -11,6 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
 import { AuthContext } from "../Providers/AuthProvider";
+import { URI } from './../constants';
 
 const getFriends = async (user: any, setLoading: any, setFriends: any) => {
   let tokenObj = await AsyncStorage.getItem("token");
@@ -20,7 +21,7 @@ const getFriends = async (user: any, setLoading: any, setFriends: any) => {
   }
   try {
     let response = await fetch(
-      `http://192.168.0.103:8080/getAllFriends/${user.id}`,
+      `${URI.getFriends}/${user.id}`,
       {
         headers: {
           Accept: "application/json",

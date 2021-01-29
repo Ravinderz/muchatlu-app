@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { AsyncStorage } from "react-native";
+import { URI } from './../constants';
 
 export type User = null | {
   id: number;
@@ -31,7 +32,7 @@ interface AuthProviderProps {}
 const authenticate = async (email:string,password:string) => {
   console.log("calling authenticate");
   try {
-    let response = await fetch(`http://192.168.0.103:8080/authenticate`, {
+    let response = await fetch(URI.authenticate, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -60,7 +61,7 @@ const login = async (email: string, password: string) => {
   }
 
   try {
-    let response = await fetch(`http://192.168.0.103:8080/login`, {
+    let response = await fetch(URI.login, {
       method: "POST",
       headers: {
         Accept: "application/json",

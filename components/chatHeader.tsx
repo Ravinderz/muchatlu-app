@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
+import { URI } from './../constants';
 
 const ChatHeader = (props: any) => {
   //   const item = props.item;
@@ -48,7 +49,7 @@ const ChatHeader = (props: any) => {
 
   const getUserPresence = async () => {
     const id = user.id === data.userIdFrom ? data.userIdTo : data.userIdFrom;
-    let url = `http://192.168.0.103:8080/getUserOnlinePresence/${id}`;
+    let url = `${URI.getUserPresence}/${id}`;
     console.log(url);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;

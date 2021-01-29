@@ -11,6 +11,7 @@ import {
 import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
 import { AuthContext } from "../Providers/AuthProvider";
+import { URI } from './../constants';
 
 const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
@@ -40,7 +41,7 @@ const Chat = ({ navigation }: any) => {
 
     try {
       let response = await fetch(
-        `http://192.168.0.103:8080/getUserConversations/${user.id}`,
+        `${URI.getConversations}/${user.id}`,
         {
           headers: {
             Accept: "application/json",
