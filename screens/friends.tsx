@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   AsyncStorage,
+  DeviceEventEmitter,
   FlatList,
   StyleSheet,
   View
@@ -42,8 +43,16 @@ const Friend = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
+  const friendRequestEvent = DeviceEventEmitter.addListener("FRIEND-REQUEST-UPDATE-EVENT", () => {
+    getFriends(user, setLoading, setFriends);
+  });
+
   useEffect(() => {
     getFriends(user, setLoading, setFriends);
+
+    return () => {
+      friendRequestEvent.remove();
+    }
   }, []);
 
   return (

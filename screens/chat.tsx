@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   AsyncStorage,
+  DeviceEventEmitter,
   FlatList,
   StyleSheet,
   TouchableOpacity,
@@ -16,8 +17,18 @@ const Chat = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const { user, setHeaderItem } = useContext(AuthContext);
 
+  const friendRequestEvent = DeviceEventEmitter.addListener("FRIEND-REQUEST-UPDATE-EVENT", () => {
+    getConversations();
+
+   
+  });
+
   useEffect(() => {
     getConversations();
+
+    return () => {
+      friendRequestEvent.remove();
+    }
   }, []);
 
   const getConversations = async () => {

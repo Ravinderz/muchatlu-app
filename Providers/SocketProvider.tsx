@@ -57,7 +57,7 @@ const connect = (user: any) => {
       console.log(message);
       if (message.body) {
         let msg = JSON.parse(message.body);
-        DeviceEventEmitter.emit("FRIEND_REQUEST-EVENT", msg);
+        DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", msg);
       }
     });
   });

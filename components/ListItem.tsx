@@ -1,5 +1,14 @@
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useContext, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  AsyncStorage,
+  DeviceEventEmitter,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
 
@@ -85,43 +94,141 @@ const ListItem = (props: any) => {
         : item.avatarFrom.split("/");
     let name = temp[temp.length - 1].split(".")[0];
     const imgSrc = IMAGES[name];
-    const itemTime = adjustForTimezone(item.lastMessageTimestamp);
 
-    return (
-      <View style={[styles.container, { ...props.style }]}>
-        <Image style={styles.avatar} source={imgSrc} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 4 }}>
-            {userId === item.requestFromUserId
-              ? item.requestToUsername
-              : item.requestFromUsername}
-          </Text>
-          <Text
-            style={{
-              paddingLeft: 5,
-              paddingRight: 5,
-              fontSize: 12,
-              color:
-                item.status === "Accepted"
-                  ? "#017815"
-                  : item.status === "Pending"
-                  ? "#FFb01c"
-                  : "#ff4e4e",
-              borderWidth: 1,
-              borderColor:
-                item.status === "Accepted"
-                  ? "#017815"
-                  : item.status === "Pending"
-                  ? "#FFb01c"
-                  : "#ff4e4e",
-              alignSelf: "flex-start",
-            }}
-          >
-            {item?.status}
-          </Text>
+    let showBtns: boolean = false;
+    if (item.status === "Pending" && userId === item.requestToUserId) {
+      showBtns = true;
+    } else {
+      showBtns = false;
+    }
+    // const showBtns: boolean = ((item.status === "Accepted" || item.status === "Rejected") && userId !== item.requestFromUserId) ? false : true;
+
+    const updateFriendRequest = async (status: string) => {
+      let tokenObj = await AsyncStorage.getItem("token");
+      let storedToken = null;
+      if (tokenObj !== null) {
+        storedToken = JSON.parse(tokenObj);
+      }
+      item.status = status;
+      try {
+        let response = await fetch(
+          `http://192.168.0.103:8080/updateFriendRequest`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${storedToken.token}`,
+            },
+            body: JSON.stringify(item),
+          }
+        );
+
+        let json = await response.json();
+        if (json) {
+          DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", json);
+        }
+        return json;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (showBtns) {
+      return (
+        <View style={[styles.container, { ...props.style }]}>
+          <Image style={styles.avatar} source={imgSrc} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 4 }}>
+              {userId === item.requestFromUserId
+                ? item.requestToUsername
+                : item.requestFromUsername}
+            </Text>
+            <Text
+              style={{
+                paddingLeft: 5,
+                paddingRight: 5,
+                fontSize: 12,
+                color:
+                  item.status === "Accepted"
+                    ? "#017815"
+                    : item.status === "Pending"
+                    ? "#FFb01c"
+                    : "#ff4e4e",
+                borderWidth: 1,
+                borderColor:
+                  item.status === "Accepted"
+                    ? "#017815"
+                    : item.status === "Pending"
+                    ? "#FFb01c"
+                    : "#ff4e4e",
+                alignSelf: "flex-start",
+              }}
+            >
+              {item?.status}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity
+              style={{ marginLeft: 3, marginRight: 3 }}
+              onPress={() => updateFriendRequest("Accepted")}
+            >
+              <MaterialIcons
+                name="check-circle-outline"
+                size={40}
+                color="#017815"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginLeft: 3, marginRight: 3 }}
+              onPress={() => updateFriendRequest("Rejected")}
+            >
+              <MaterialCommunityIcons
+                name="close-circle-outline"
+                size={40}
+                color="#ff4e4e"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View style={[styles.container, { ...props.style }]}>
+          <Image style={styles.avatar} source={imgSrc} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 4 }}>
+              {userId === item.requestFromUserId
+                ? item.requestToUsername
+                : item.requestFromUsername}
+            </Text>
+            <Text
+              style={{
+                paddingLeft: 5,
+                paddingRight: 5,
+                fontSize: 12,
+                color:
+                  item.status === "Accepted"
+                    ? "#017815"
+                    : item.status === "Pending"
+                    ? "#FFb01c"
+                    : "#ff4e4e",
+                borderWidth: 1,
+                borderColor:
+                  item.status === "Accepted"
+                    ? "#017815"
+                    : item.status === "Pending"
+                    ? "#FFb01c"
+                    : "#ff4e4e",
+                alignSelf: "flex-start",
+              }}
+            >
+              {item?.status}
+            </Text>
+          </View>
+        </View>
+      );
+    }
   }
 };
 export default ListItem;

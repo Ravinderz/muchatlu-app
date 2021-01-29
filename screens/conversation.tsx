@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   AsyncStorage,
@@ -142,18 +142,11 @@ const Conversation = ({ route }: any) => {
           value={text}
           onChangeText={setText}
         />
-        <TouchableOpacity
-          style={{
-            marginLeft: 5,
-            backgroundColor: "#6159E6",
-            borderRadius: 50,
-          }}
-          onPress={() => sendMsg(text)}
-        >
-          <Ionicons
-            name="paper-plane-outline"
-            size={20}
-            color="#FFF"
+        <TouchableOpacity onPress={() => sendMsg(text)}>
+          <MaterialCommunityIcons
+            name="send-circle"
+            size={40}
+            color="#6159E6"
             style={{ padding: 8 }}
           />
         </TouchableOpacity>
