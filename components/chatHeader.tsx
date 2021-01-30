@@ -16,8 +16,6 @@ const ChatHeader = (props: any) => {
   const { user, headerItem } = useContext(AuthContext);
   const data = headerItem;
   const userId = user.id;
-  console.log("chat header data :: ", data);
-  console.log("chat header data :: ", user);
   let temp =
     userId === data.userIdFrom
       ? data.avatarTo.split("/")
@@ -25,6 +23,7 @@ const ChatHeader = (props: any) => {
   let name = temp[temp.length - 1].split(".")[0];
   const imgSrc = IMAGES[name];
   const [isOnline, setIsOnline] = useState("");
+  const [typingItem, setTypingItem] = useState();
 
   const loginEvent = DeviceEventEmitter.addListener(
     "LOGIN-EVENT",
@@ -44,6 +43,13 @@ const ChatHeader = (props: any) => {
       if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
         setIsOnline(msg.online ? "Online" : "Offline");
       }
+    }
+  );
+
+  const typingEvent = DeviceEventEmitter.addListener(
+    "TYPING-EVENT",
+    (msg: any) => {
+      setTypingItem(msg);
     }
   );
 
@@ -78,6 +84,12 @@ const ChatHeader = (props: any) => {
   useEffect(() => {
     console.log(headerItem);
     getUserPresence();
+
+    return () => {
+      loginEvent.remove();
+      logoutEvent.remove();
+      typingEvent.remove();
+    };
   }, []);
 
   return (
@@ -91,7 +103,7 @@ const ChatHeader = (props: any) => {
           {userId === data.userIdFrom ? data.usernameTo : data.usernameFrom}
         </Text>
         <Text style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
-          {isOnline}
+          {(typingItem && typingItem.userIdFrom === data.userIdTo && typingItem.isTyping) ? 'typing...' : isOnline}
         </Text>
       </View>
     </View>

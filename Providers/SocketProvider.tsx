@@ -2,13 +2,15 @@ import React, { useContext, useEffect } from "react";
 import { DeviceEventEmitter } from "react-native";
 import SockJS from "sockjs-client"; // Note this line
 import Stomp from "stompjs";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 import { AuthContext } from "./AuthProvider";
 
 export const SocketContext = React.createContext<{
   sendMessage: (message: any) => void;
+  isTyping: (message: any) => void;
 }>({
   sendMessage: () => {},
+  isTyping: () => {},
 });
 
 interface SocketProviderProps {}
@@ -72,6 +74,14 @@ const sendMessage = (message: any) => {
   );
 };
 
+const isTyping = (message: any) => {
+  stompClient.send(
+    `/app/chat.typing.${message.userIdTo}`,
+    {},
+    JSON.stringify(message)
+  );
+};
+
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { user } = useContext(AuthContext);
   useEffect(() => {
@@ -85,6 +95,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       value={{
         sendMessage: (message: any) => {
           sendMessage(message);
+        },
+        isTyping: (message: any) => {
+          isTyping(message);
         },
       }}
     >

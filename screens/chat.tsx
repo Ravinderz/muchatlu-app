@@ -73,7 +73,12 @@ const Chat = ({ navigation }: any) => {
               <TouchableOpacity
                 onPress={() => {
                   setHeaderItem(item);
-                  navigation.navigate("Conversation", { item: item });
+                  navigation.navigate("Conversation", { item: item, typingItem:{
+                    userIdFrom: "",
+                    userIdTo: "",
+                    isTyping: false,
+                    conversationId: item.id,
+                  } });
                 }}
               >
                 <ListItem item={item} listType={"chats"} />

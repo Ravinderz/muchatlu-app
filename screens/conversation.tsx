@@ -11,21 +11,29 @@ import InputField from "../components/inputField";
 import Message from "../components/Message";
 import { AuthContext } from "../Providers/AuthProvider";
 import { SocketContext } from "../Providers/SocketProvider";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 
 interface conversationProps {}
 
 const Conversation = ({ route }: any) => {
+  const [typingItem, setTypingItem] = useState(route.params.typingItem);
   const item = route.params.item;
   const [text, setText] = useState("");
   const [count, setCount] = useState(12);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
-  const { sendMessage } = useContext(SocketContext);
+  const { sendMessage, isTyping } = useContext(SocketContext);
 
   useEffect(() => {
     getConversation();
+
+    console.log("typingITem", typingItem);
+
+    return () => {
+      messageEvent.remove();
+      // typingEvent.remove();
+    };
   }, []);
 
   const messageEvent = DeviceEventEmitter.addListener(
@@ -36,6 +44,17 @@ const Conversation = ({ route }: any) => {
       setData(temp);
     }
   );
+
+  // const typingEvent = DeviceEventEmitter.addListener(
+  //   "TYPING-EVENT",
+  //   (msg: any) => {
+  //     // console.log("This is typing", msg);
+  //     setTypingItem(msg);
+  //     // let temp = [...data];
+  //     // temp.push(msg);
+  //     // setData(temp);
+  //   }
+  // );
 
   const getConversation = async () => {
     let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
@@ -97,12 +116,44 @@ const Conversation = ({ route }: any) => {
       };
     }
 
-    sendMessage(obj);
-    let temp = [...data];
-    temp.push(obj);
-    setData(temp);
-    setCount(count + 1);
-    setText("");
+    console.log("message", obj);
+
+    if (text && text.trim() !== "" && text !== "") {
+      sendMessage(obj);
+      let temp = [...data];
+      temp.push(obj);
+      setData(temp);
+      setCount(count + 1);
+      setText("");
+    }
+  };
+
+  const typing = (text: any) => {
+    let msg;
+
+    if (user.id === item.userIdFrom) {
+      msg = {
+        userIdFrom: user.id,
+        userIdTo: item.userIdTo,
+        isTyping: true,
+        conversationId: item.id,
+      };
+    } else {
+      msg = {
+        userIdFrom: user.id,
+        userIdTo: item.userIdFrom,
+        isTyping: true,
+        conversationId: item.id,
+      };
+    }
+
+    if (text && text.trim() !== "" && text !== "") {
+      msg.isTyping = true;
+    } else {
+      msg.isTyping = false;
+    }
+
+    isTyping(msg);
   };
 
   const scrollRef: any = useRef();
@@ -113,13 +164,6 @@ const Conversation = ({ route }: any) => {
       keyboardVerticalOffset={-500}
       style={{ flex: 1, backgroundColor: "#fff" }}
     >
-      {/* <View
-        style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
-        ref={scrollRef}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
-      > */}
       <FlatList
         style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
         ref={scrollRef}
@@ -141,7 +185,10 @@ const Conversation = ({ route }: any) => {
           placeholderTextColor="#6159E6"
           backgroundColor="#E8E3FF"
           value={text}
-          onChangeText={setText}
+          onChangeText={(text: any) => {
+            setText(text);
+            typing(text);
+          }}
         />
         <TouchableOpacity onPress={() => sendMsg(text)}>
           <MaterialCommunityIcons

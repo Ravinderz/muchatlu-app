@@ -30,7 +30,11 @@ const Message = (props: any) => {
   const { user } = useContext(AuthContext);
   const userId = user.id;
   const item = data;
-  const time = adjustForTimezone(item.timestamp);
+  let time;
+  if(item.timestamp){
+    time = adjustForTimezone(item.timestamp);
+  }
+  
 
   return (
     <View
@@ -65,7 +69,7 @@ const Message = (props: any) => {
             alignSelf: "flex-end",
           }}
         >
-          {time}
+          {time ? time : ''}
         </Text>
       </View>
     </View>
