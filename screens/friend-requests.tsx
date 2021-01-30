@@ -1,16 +1,19 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  AsyncStorage, DeviceEventEmitter, FlatList,
+  AsyncStorage,
+  DeviceEventEmitter,
+  FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View
 } from "react-native";
 import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
+import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 
 const getFriendRequests = async (
   user: any,
@@ -24,16 +27,13 @@ const getFriendRequests = async (
   }
 
   try {
-    let response = await fetch(
-      `${URI.getFriendRequests}/${user.id}`,
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${storedToken.token}`,
-        },
-      }
-    );
+    let response = await fetch(`${URI.getFriendRequests}/${user.id}`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${storedToken.token}`,
+      },
+    });
 
     let json = await response.json();
     setFriendRequests(json);
@@ -43,6 +43,18 @@ const getFriendRequests = async (
   }
 };
 
+const skeletonLoading = () => {
+  return (
+    <>
+      <ListItemSkeleton />
+      <ListItemSkeleton />
+      <ListItemSkeleton />
+      <ListItemSkeleton />
+      <ListItemSkeleton />
+    </>
+  );
+};
+
 const FriendRequest = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,28 +62,32 @@ const FriendRequest = () => {
   const [text, setText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const friendRequestEvent = DeviceEventEmitter.addListener("FRIEND-REQUEST-UPDATE-EVENT", () => {
-    getFriendRequests(user, setLoading, setFriendRequests);
-  });
+  const friendRequestEvent = DeviceEventEmitter.addListener(
+    "FRIEND-REQUEST-UPDATE-EVENT",
+    () => {
+      getFriendRequests(user, setLoading, setFriendRequests);
+    }
+  );
 
   const getUserDetails = async (email: string, storedToken: any) => {
     try {
-      let response = await fetch(
-        `${URI.getUserDetails}/${email}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${storedToken.token}`,
-          },
-        }
-      );
+      let response = await fetch(`${URI.getUserDetails}/${email}`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken.token}`,
+        },
+      });
 
       let json = await response.json();
       return json;
     } catch (error) {
-      console.error(error);
+      console.log(error.message);
       setErrorMessage(error.message);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
+      return null;
     }
   };
 
@@ -83,6 +99,18 @@ const FriendRequest = () => {
     }
 
     if (text === friendRequests[friendRequests.length - 1]) {
+      return;
+    }
+
+    if (!text && !text.trim()) {
+      return;
+    }
+
+    if (text && (text.indexOf("@") === -1 || text.indexOf(".") === -1)) {
+      setErrorMessage("Invalid Email address");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
       return;
     }
 
@@ -106,26 +134,20 @@ const FriendRequest = () => {
         avatarTo: toUser.avatar,
         avatarFrom: user.avatar,
       };
-      console.log(friendRequest);
 
       try {
-        let response = await fetch(
-          URI.sendFriendRequest,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${storedToken.token}`,
-            },
-            body: JSON.stringify(friendRequest),
-          }
-        );
+        let response = await fetch(URI.sendFriendRequest, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken.token}`,
+          },
+          body: JSON.stringify(friendRequest),
+        });
 
         let json = await response.json();
         if (json) {
-          //this.message = `Friend Request to ${value.username} sent successfully`;
-          //console.log(request);
           getFriendRequests(user, setLoading, setFriendRequests);
           setText("");
         }
@@ -136,21 +158,24 @@ const FriendRequest = () => {
       }
     } else {
       setErrorMessage("User doesn't exist");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
+      return;
     }
   };
 
   useEffect(() => {
     getFriendRequests(user, setLoading, setFriendRequests);
-
     return () => {
       friendRequestEvent.remove();
-    }
+    };
   }, []);
 
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
-        <ActivityIndicator />
+        skeletonLoading()
       ) : (
         <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -168,6 +193,19 @@ const FriendRequest = () => {
             >
               <MaterialIcons name="add-circle" size={40} color="#6159E6" />
             </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 10,
+            }}
+          >
+            {errorMessage ? (
+              <Text style={{ color: "#ff4e4e" }}>{errorMessage}</Text>
+            ) : (
+              <></>
+            )}
           </View>
           <FlatList
             data={friendRequests}

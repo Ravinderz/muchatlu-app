@@ -23,7 +23,6 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
   };
 
   const registerUser = async () => {
-    console.log("resgister usre");
     const imgPath = "./../../assets/avatars/";
     const avatar = imgPath + "cats_" + randomIntFromInterval(1, 33) + ".jpg";
     let obj = {
@@ -33,7 +32,6 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
       avatar: avatar,
       status: "Hi! I am available.",
     };
-    console.log(obj);
     try {
       let response = await fetch(URI.register, {
         method:"POST",
@@ -45,7 +43,6 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
       });
 
       let json = await response.json();
-      console.log(json)
       if (json) {
         navigation.navigate("Login");
       }

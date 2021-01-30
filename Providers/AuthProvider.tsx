@@ -45,10 +45,8 @@ const authenticate = async (email:string,password:string) => {
     });
 
     let json = await response.json();
-    console.log("json", json);
     AsyncStorage.setItem("token", JSON.stringify(json));
   } catch (error) {
-      console.log("inside catch error");
     console.error(error);
   }
 };
@@ -92,8 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         user,
         headerItem,
         login: (email, password) => {
-          console.log("inside login retyurn method", email);
-          console.log(password);
           authenticate(email,password).then((token) => {
             login(email,password).then((value:any) => {
                 setUser(value);

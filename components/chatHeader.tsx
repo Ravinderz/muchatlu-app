@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 
 const ChatHeader = (props: any) => {
   //   const item = props.item;
@@ -32,14 +32,12 @@ const ChatHeader = (props: any) => {
       if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
         setIsOnline(msg.online ? "Online" : "Offline");
       }
-      console.log(msg);
     }
   );
 
   const logoutEvent = DeviceEventEmitter.addListener(
     "LOGOUT-EVENT",
     (msg: any) => {
-      console.log(msg);
       if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
         setIsOnline(msg.online ? "Online" : "Offline");
       }
@@ -56,7 +54,6 @@ const ChatHeader = (props: any) => {
   const getUserPresence = async () => {
     const id = user.id === data.userIdFrom ? data.userIdTo : data.userIdFrom;
     let url = `${URI.getUserPresence}/${id}`;
-    console.log(url);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {
@@ -73,18 +70,14 @@ const ChatHeader = (props: any) => {
       });
 
       let json = await response.json();
-      console.log("user status", json);
       setIsOnline(json.online ? "Online" : "Offline");
-      console.log("user status", json);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    console.log(headerItem);
     getUserPresence();
-
     return () => {
       loginEvent.remove();
       logoutEvent.remove();
@@ -103,7 +96,11 @@ const ChatHeader = (props: any) => {
           {userId === data.userIdFrom ? data.usernameTo : data.usernameFrom}
         </Text>
         <Text style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
-          {(typingItem && typingItem.userIdFrom === data.userIdTo && typingItem.isTyping) ? 'typing...' : isOnline}
+          {typingItem &&
+          typingItem.userIdFrom === data.userIdTo &&
+          typingItem.isTyping
+            ? "typing..."
+            : isOnline}
         </Text>
       </View>
     </View>

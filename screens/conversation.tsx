@@ -32,7 +32,6 @@ const Conversation = ({ route }: any) => {
 
     return () => {
       messageEvent.remove();
-      // typingEvent.remove();
     };
   }, []);
 
@@ -45,20 +44,8 @@ const Conversation = ({ route }: any) => {
     }
   );
 
-  // const typingEvent = DeviceEventEmitter.addListener(
-  //   "TYPING-EVENT",
-  //   (msg: any) => {
-  //     // console.log("This is typing", msg);
-  //     setTypingItem(msg);
-  //     // let temp = [...data];
-  //     // temp.push(msg);
-  //     // setData(temp);
-  //   }
-  // );
-
   const getConversation = async () => {
     let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
-    console.log(url);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {
@@ -84,7 +71,6 @@ const Conversation = ({ route }: any) => {
 
   const sendMsg = (text: string) => {
     let date = new Date();
-    console.log(text);
     let obj;
     if (user.id === item.userIdFrom) {
       obj = {
@@ -115,8 +101,6 @@ const Conversation = ({ route }: any) => {
         ).toISOString(),
       };
     }
-
-    console.log("message", obj);
 
     if (text && text.trim() !== "" && text !== "") {
       sendMessage(obj);
@@ -152,7 +136,6 @@ const Conversation = ({ route }: any) => {
     } else {
       msg.isTyping = false;
     }
-
     isTyping(msg);
   };
 

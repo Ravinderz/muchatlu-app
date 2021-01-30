@@ -12,7 +12,6 @@ import IMAGES from "./../assets/index.js";
 
 const Profile = ({route}:any) => {
 
-  
   const item = route.params.item;
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);

@@ -37,13 +37,10 @@ const get12HourFormat = (value: any) => {
 };
 
 const ListItem = (props: any) => {
-  const data = props.item;
+  const item = props.item;
   const listType = props.listType;
-  const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
   const userId = user.id;
-
-  const item = data;
 
   if (listType && listType === "friends") {
     let temp = item.avatar.split("/");
@@ -71,6 +68,8 @@ const ListItem = (props: any) => {
     let name = temp[temp.length - 1].split(".")[0];
     const imgSrc = IMAGES[name];
     const itemTime = adjustForTimezone(item.lastMessageTimestamp);
+    const [showLastMessage, setShowLastMessage] = useState(item && item.lastMessageFrom ? true : false);
+    console.log("showLastMessage",showLastMessage)
 
     return (
       <View style={styles.container}>
@@ -79,9 +78,11 @@ const ListItem = (props: any) => {
           <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 4 }}>
             {user.id === item.userIdFrom ? item.usernameTo : item.usernameFrom}
           </Text>
+          {/* {showLastMessage} ? ( */}
           <Text style={{ fontSize: 12, color: "#A4A4A4" }} numberOfLines={1}>
-            {item?.lastMessageFrom}:{item.lastMessage}
+            {item?.lastMessageFrom}:{item.lastMessage}  
           </Text>
+          {/* ):(<></>) */}
         </View>
         <View>
           <Text style={styles.time}>{itemTime}</Text>
@@ -89,6 +90,9 @@ const ListItem = (props: any) => {
       </View>
     );
   } else if (listType && listType === "friendRequests") {
+
+    console.log(item);
+
     let temp =
       userId === item.requestFromUserId
         ? item.avatarTo.split("/")

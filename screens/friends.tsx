@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   AsyncStorage,
   DeviceEventEmitter,
   FlatList,
@@ -10,6 +9,7 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
+import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { URI } from './../constants';
 
@@ -39,6 +39,18 @@ const getFriends = async (user: any, setLoading: any, setFriends: any) => {
   }
 };
 
+const skeletonLoading = () => {
+  return (
+    <>
+     <ListItemSkeleton />
+     <ListItemSkeleton />
+     <ListItemSkeleton />
+     <ListItemSkeleton />
+     <ListItemSkeleton />
+    </>
+  );
+};
+
 const Friend = ({ navigation }: any) => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +71,7 @@ const Friend = ({ navigation }: any) => {
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
-        <ActivityIndicator />
+        skeletonLoading()
       ) : (
         <View>
           <InputField placeholder="Search" width="100%" />
