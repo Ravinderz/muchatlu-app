@@ -82,7 +82,7 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
           <Text style={{ fontSize: 24, marginBottom: 20 }}>Sign Up</Text>
           <InputField placeholder="Username" value={username} onChangeText={setUsername}/>
           <InputField placeholder="Email address" value={email} onChangeText={setEmail}/>
-          <InputField placeholder="Password" value={password} onChangeText={setPassword}/>
+          <InputField placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
           <TouchableOpacity
             style={styles.btnPrimary}
             onPress={() => registerUser()}

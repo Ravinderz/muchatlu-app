@@ -1,6 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from "react";
 import {
-  AsyncStorage,
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
@@ -44,9 +44,6 @@ const skeletonLoading = () => {
     <>
      <ListItemSkeleton />
      <ListItemSkeleton />
-     <ListItemSkeleton />
-     <ListItemSkeleton />
-     <ListItemSkeleton />
     </>
   );
 };
@@ -54,7 +51,9 @@ const skeletonLoading = () => {
 const Friend = ({ navigation }: any) => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [text, setText] = useState('');
   const { user } = useContext(AuthContext);
+
 
   const friendRequestEvent = DeviceEventEmitter.addListener("FRIEND-REQUEST-UPDATE-EVENT", () => {
     getFriends(user, setLoading, setFriends);
@@ -62,19 +61,54 @@ const Friend = ({ navigation }: any) => {
 
   useEffect(() => {
     getFriends(user, setLoading, setFriends);
-
     return () => {
       friendRequestEvent.remove();
     }
   }, []);
 
+  const filterFriends = async (text:string) => {
+
+    console.log(text);
+
+    if(!text && text.trim() === ""){
+      getFriends(user, setLoading, setFriends);
+      return;
+    }
+    let tokenObj = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if (tokenObj !== null) {
+      storedToken = JSON.parse(tokenObj);
+    }
+    try {
+      let response = await fetch(
+        `${URI.filterFriends}/${user.id}/${text}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken.token}`,
+          },
+        }
+      );
+  
+      let json = await response.json();      
+      console.log("friend json",json)
+      setFriends(json);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
         skeletonLoading()
+        // <ActivityIndicator/>
       ) : (
         <View>
-          <InputField placeholder="Search" width="100%" />
+          <InputField placeholder="Search" width="100%"  onChangeText={(text:string) => {setText(text),filterFriends(text)}}
+            value={text} />
           <FlatList
             data={friends}
             keyExtractor={(item: any) => item.id.toString()}

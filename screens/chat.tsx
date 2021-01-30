@@ -1,6 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from "react";
 import {
-  AsyncStorage,
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
@@ -61,9 +61,6 @@ const Chat = ({ navigation }: any) => {
       <>
        <ListItemSkeleton />
        <ListItemSkeleton />
-       <ListItemSkeleton />
-       <ListItemSkeleton />
-       <ListItemSkeleton />
       </>
     );
   };
@@ -72,6 +69,7 @@ const Chat = ({ navigation }: any) => {
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
         skeletonLoading()
+        // <ActivityIndicator/>
       ) : (
         <View>
           <InputField placeholder="Search" width="100%" />

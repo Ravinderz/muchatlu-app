@@ -2,6 +2,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import ChatHeader from "../components/chatHeader";
+import MainHeader from "../components/mainHeader";
 import Conversation from "../screens/conversation";
 import Profile from "../screens/profile";
 import Chat from "./../screens/chat";
@@ -30,7 +31,7 @@ export const HomeRoutes: React.FC<HomeRoutesProps> = ({}) => {
       <Stack.Screen
         name="Home"
         component={HomeStack}
-        options={{ title: "Muchatlu" }}
+        options={{ headerTitle: props  => <MainHeader {...props}/> }}
       />
       <Stack.Screen
         name="Conversation"

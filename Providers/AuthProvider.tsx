@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from "react";
 import { URI } from './../constants';
 
 export type User = null | {
@@ -15,7 +15,7 @@ export const AuthContext = React.createContext<{
   user: User;
   headerItem: any;
   login: (email: string, password: string) => void;
-  logout: (userId: number) => void;
+  logout: (user: User) => void;
   setHeaderItem: (item: any) => void;
   
 }>({
@@ -80,9 +80,63 @@ const login = async (email: string, password: string) => {
   }
 };
 
+
+
+const getUserFromStorage = async () => {
+  let user = await AsyncStorage.getItem('user');
+  let obj :User;
+  if(user){
+    obj = JSON.parse(user);
+    return obj;  
+  }
+  return null;
+  
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
   const [headerItem, setHeaderItem] = useState<any>(null);
+
+
+  const logout = async () => {
+    let tokenObj  = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if(tokenObj !== null){
+      storedToken = JSON.parse(tokenObj);
+    }
+  
+    try {
+      let response = await fetch(URI.logout, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken.token}`,
+        },
+        body: JSON.stringify(user),
+      });
+  
+      let json: User = await response.json();
+      if(json){
+        AsyncStorage.clear();
+        setUser(null);
+      }
+      return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  useEffect(() => {
+    
+    getUserFromStorage().then((value:User) => {
+      setUser(value);
+    })
+    return () => {
+    
+    }
+  }, [])
 
   return (
     <AuthContext.Provider
@@ -96,8 +150,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               });
           });
         },
-        logout: () => {
-          AsyncStorage.removeItem("user");
+        logout: (user:User) => {
+          logout(user);
         },
         setHeaderItem: (item:any) => {
           setHeaderItem(item);

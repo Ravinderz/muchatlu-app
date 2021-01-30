@@ -19,6 +19,7 @@ const URI = {
     getUserDetails:`${baseUrl}/getUserDetails`,
     getUserPresence:`${baseUrl}/getUserOnlinePresence`,
     updateUserDetails:`${baseUrl}/updateUserDetails`,
+    filterFriends:`${baseUrl}/filterFriends`,
     socketConnect:`${baseUrl}/chat`
 
 }

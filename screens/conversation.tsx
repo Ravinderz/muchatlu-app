@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-  AsyncStorage,
   DeviceEventEmitter,
   KeyboardAvoidingView,
   View

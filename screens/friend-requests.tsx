@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from "react";
 import {
-  AsyncStorage,
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
@@ -46,9 +46,6 @@ const getFriendRequests = async (
 const skeletonLoading = () => {
   return (
     <>
-      <ListItemSkeleton />
-      <ListItemSkeleton />
-      <ListItemSkeleton />
       <ListItemSkeleton />
       <ListItemSkeleton />
     </>
@@ -176,11 +173,12 @@ const FriendRequest = () => {
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
         skeletonLoading()
+        // <ActivityIndicator/>
       ) : (
         <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <InputField
-              placeholder="Search"
+              placeholder="Email address"
               width="88%"
               value={text}
               onChangeText={setText}
