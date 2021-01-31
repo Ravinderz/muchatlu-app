@@ -16,7 +16,8 @@ export const AuthContext = React.createContext<{
   user: User;
   headerItem: any;
   login: (email: string, password: string) => void;
-  logout: (user: User) => void;
+  logout: () => void;
+  refreshToken: (user: User) => void;
   setHeaderItem: (item: any) => void;
   
 }>({
@@ -24,6 +25,7 @@ export const AuthContext = React.createContext<{
   headerItem: null,
   login: () => {},
   logout: () => {},
+  refreshToken: () => {},
   setHeaderItem:() => {}
 
 });
@@ -47,6 +49,33 @@ const authenticate = async (email:string,password:string) => {
 
     let json = await response.json();
     AsyncStorage.setItem("token", JSON.stringify(json));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const refreshToken = async (user: User) => {
+  let tokenObj  = await AsyncStorage.getItem("token");
+  let storedToken = null;
+  if(tokenObj !== null){
+    storedToken = JSON.parse(tokenObj);
+  }
+
+  try {
+    let response = await fetch(`${URI.refreshToken}/${user.email}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${storedToken.refreshToken}`,
+      },
+    });
+
+    let json = await response.json();
+    storedToken.token = json.token;
+    AsyncStorage.removeItem("token");
+    AsyncStorage.setItem("token",storedToken);
+    return json;
   } catch (error) {
     console.error(error);
   }
@@ -113,6 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${storedToken.token}`,
+          "isRefreshToken":"true",
         },
         body: JSON.stringify(user),
       });
@@ -152,8 +182,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               });
           });
         },
-        logout: (user:User) => {
-          logout(user);
+        logout: () => {
+          logout();
+        },
+        refreshToken: (user) => {
+          refreshToken(user);
         },
         setHeaderItem: (item:any) => {
           setHeaderItem(item);

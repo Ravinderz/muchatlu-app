@@ -6,6 +6,7 @@ const baseUrl = devBaseUrl;
 
 const URI = {
     authenticate:`${baseUrl}/authenticate`,
+    refreshToken:`${baseUrl}/refreshToken`,
     login:`${baseUrl}/login`,
     logout:`${baseUrl}/logoutUser`,
     register:`${baseUrl}/register`,

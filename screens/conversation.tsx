@@ -27,9 +27,6 @@ const Conversation = ({ route }: any) => {
 
   useEffect(() => {
     getConversation();
-
-    console.log("typingITem", typingItem);
-
     return () => {
       messageEvent.remove();
     };
@@ -109,6 +106,7 @@ const Conversation = ({ route }: any) => {
       setData(temp);
       setCount(count + 1);
       setText("");
+      typing("");
     }
   };
 

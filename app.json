@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "muchatlu",
+    "name": "Muchatlu",
     "slug": "muchatlu-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,7 @@
     "ios": {
       "bundleIdentifier": "in.Muchatlu.muchatlu",
       "supportsTablet": true,
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.1"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +27,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "in.Muchatlu.muchatlu",
-      "versionCode": 1
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
