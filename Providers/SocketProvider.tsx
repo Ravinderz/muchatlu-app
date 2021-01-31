@@ -16,54 +16,76 @@ export const SocketContext = React.createContext<{
 interface SocketProviderProps {}
 
 let stompClient: any;
+let isConnected = false;
+
+console.log(stompClient)
+
+const userLogoutEvent = DeviceEventEmitter.addListener(
+  "USER-LOGOUT-EVENT",
+  (value:boolean) => {
+    console.log("before logout");
+    if(stompClient){
+      stompClient.disconnect();
+    }
+  }
+);
+
+const allSubscriptions = (id:number) => {
+  stompClient.subscribe(`/topic/${id}/messages`, (message: any) => {
+    if (message.body) {
+      let msg = JSON.parse(message.body);
+      DeviceEventEmitter.emit("MESSAGE-EVENT", msg);
+    }
+  });
+
+  stompClient.subscribe(
+    `/topic/${id}/messages.typing`,
+    (message: any) => {
+      if (message.body) {
+        let msg = JSON.parse(message.body);
+        DeviceEventEmitter.emit("TYPING-EVENT", msg);
+      }
+    }
+  );
+
+  stompClient.subscribe(`/topic/public.login`, (message: any) => {
+    if (message.body) {
+      let msg = JSON.parse(message.body);
+      DeviceEventEmitter.emit("LOGIN-EVENT", msg);
+    }
+  });
+
+  stompClient.subscribe(`/topic/public.logout`, (message: any) => {
+    if (message.body) {
+      let msg = JSON.parse(message.body);
+      DeviceEventEmitter.emit("LOGOUT-EVENT", msg);
+    }
+  });
+
+  stompClient.subscribe(`/topic/${id}.friendRequest`, (message: any) => {
+    console.log(message);
+    if (message.body) {
+      let msg = JSON.parse(message.body);
+      DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", msg);
+    }
+  });
+}
+
 
 const connect = (user: any) => {
   const serverUrl = `${URI.socketConnect}?userId=${user.id}`;
   const ws = new SockJS(serverUrl);
-  stompClient = Stomp.over(ws);
+  
+  console.log("socket is connected ::: ",isConnected)
+  
+    stompClient = Stomp.over(ws);    
+    stompClient.connect({ userId: `${user.id}` }, function (frame: any) {
+      isConnected = true;
+      allSubscriptions(user.id);
 
-  // tslint:disable-next-line:only-arrow-functions
-
-  stompClient.connect({ userId: `${user.id}` }, function (frame: any) {
-    stompClient.subscribe(`/topic/${user.id}/messages`, (message: any) => {
-      if (message.body) {
-        let msg = JSON.parse(message.body);
-        DeviceEventEmitter.emit("MESSAGE-EVENT", msg);
-      }
     });
-
-    stompClient.subscribe(
-      `/topic/${user.id}/messages.typing`,
-      (message: any) => {
-        if (message.body) {
-          let msg = JSON.parse(message.body);
-          DeviceEventEmitter.emit("TYPING-EVENT", msg);
-        }
-      }
-    );
-
-    stompClient.subscribe(`/topic/public.login`, (message: any) => {
-      if (message.body) {
-        let msg = JSON.parse(message.body);
-        DeviceEventEmitter.emit("LOGIN-EVENT", msg);
-      }
-    });
-
-    stompClient.subscribe(`/topic/public.logout`, (message: any) => {
-      if (message.body) {
-        let msg = JSON.parse(message.body);
-        DeviceEventEmitter.emit("LOGOUT-EVENT", msg);
-      }
-    });
-
-    stompClient.subscribe(`/topic/${user.id}.friendRequest`, (message: any) => {
-      console.log(message);
-      if (message.body) {
-        let msg = JSON.parse(message.body);
-        DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", msg);
-      }
-    });
-  });
+  // }
+  
 };
 
 const sendMessage = (message: any) => {

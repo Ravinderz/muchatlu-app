@@ -91,8 +91,6 @@ const ListItem = (props: any) => {
     );
   } else if (listType && listType === "friendRequests") {
 
-    console.log(item);
-
     let temp =
       userId === item.requestFromUserId
         ? item.avatarTo.split("/")

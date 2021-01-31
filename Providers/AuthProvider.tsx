@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from "react";
+import { DeviceEventEmitter } from 'react-native';
 import { URI } from './../constants';
 
 export type User = null | {
@@ -118,6 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   
       let json: User = await response.json();
       if(json){
+        DeviceEventEmitter.emit("USER-LOGOUT-EVENT", true);
         AsyncStorage.clear();
         setUser(null);
       }
@@ -129,7 +131,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 
   useEffect(() => {
-    
+
     getUserFromStorage().then((value:User) => {
       setUser(value);
     })
