@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -21,24 +21,22 @@ export default function Login({ navigation, route }: AuthNavProps<"Login">) {
   const [loading, setLoading] = useState(true);
 
   const getUserFromStorage = async () => {
-    let user = await AsyncStorage.getItem('user');
-    let obj :any;
-    if(user !== null){
+    let user = await AsyncStorage.getItem("user");
+    let obj: any;
+    if (user !== null) {
       obj = JSON.parse(user);
-      return obj;  
-    }else{
+      return obj;
+    } else {
       setLoading(false);
     }
     return null;
-    
-  }
+  };
 
   useEffect(() => {
-    //getUserFromStorage();
-    setLoading(false);
-    return () => {
-    }
-  }, [])
+    getUserFromStorage();
+    // setLoading(false);
+    return () => {};
+  }, []);
 
   return (
     <KeyboardAvoidingView

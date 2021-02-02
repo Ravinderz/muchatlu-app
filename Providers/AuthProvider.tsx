@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { DeviceEventEmitter } from 'react-native';
-import { URI } from './../constants';
+import { DeviceEventEmitter } from "react-native";
+import { URI } from "./../constants";
 
 export type User = null | {
   id: number;
@@ -19,20 +19,18 @@ export const AuthContext = React.createContext<{
   logout: () => void;
   refreshToken: (user: User) => any;
   setHeaderItem: (item: any) => void;
-  
 }>({
   user: null,
   headerItem: null,
   login: () => {},
   logout: () => {},
   refreshToken: () => {},
-  setHeaderItem:() => {}
-
+  setHeaderItem: () => {},
 });
 
 interface AuthProviderProps {}
 
-const authenticate = async (email:string,password:string) => {
+const authenticate = async (email: string, password: string) => {
   console.log("calling authenticate");
   try {
     let response = await fetch(URI.authenticate, {
@@ -55,9 +53,9 @@ const authenticate = async (email:string,password:string) => {
 };
 
 const refreshToken = async (user: User) => {
-  let tokenObj  = await AsyncStorage.getItem("token");
+  let tokenObj = await AsyncStorage.getItem("token");
   let storedToken = null;
-  if(tokenObj !== null){
+  if (tokenObj !== null) {
     storedToken = JSON.parse(tokenObj);
   }
 
@@ -74,17 +72,17 @@ const refreshToken = async (user: User) => {
     let json = await response.json();
     storedToken.token = json.token;
     await AsyncStorage.removeItem("token");
-    await AsyncStorage.setItem("token",JSON.stringify(storedToken));
-    return 'Completed'
+    await AsyncStorage.setItem("token", JSON.stringify(storedToken));
+    return "Completed";
   } catch (error) {
     console.error(error);
   }
 };
 
 const login = async (email: string, password: string) => {
-  let tokenObj  = await AsyncStorage.getItem("token");
+  let tokenObj = await AsyncStorage.getItem("token");
   let storedToken = null;
-  if(tokenObj !== null){
+  if (tokenObj !== null) {
     storedToken = JSON.parse(tokenObj);
   }
 
@@ -110,31 +108,27 @@ const login = async (email: string, password: string) => {
   }
 };
 
-
-
 const getUserFromStorage = async () => {
-  let user = await AsyncStorage.getItem('user');
-  let obj :User;
-  if(user){
+  let user = await AsyncStorage.getItem("user");
+  let obj: User;
+  if (user) {
     obj = JSON.parse(user);
-    return obj;  
+    return obj;
   }
   return null;
-  
-}
+};
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
   const [headerItem, setHeaderItem] = useState<any>(null);
 
-
   const logout = async () => {
-    let tokenObj  = await AsyncStorage.getItem("token");
+    let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
-    if(tokenObj !== null){
+    if (tokenObj !== null) {
       storedToken = JSON.parse(tokenObj);
     }
-  
+
     try {
       let response = await fetch(URI.logout, {
         method: "POST",
@@ -142,13 +136,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${storedToken.token}`,
-          "isRefreshToken":"true",
+          isRefreshToken: "true",
         },
         body: JSON.stringify(user),
       });
-  
+
       let json: User = await response.json();
-      if(json){
+      if (json) {
         DeviceEventEmitter.emit("USER-LOGOUT-EVENT", true);
         AsyncStorage.clear();
         setUser(null);
@@ -159,16 +153,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-
   useEffect(() => {
-
-    // getUserFromStorage().then((value:User) => {
-    //   setUser(value);
-    // })
-    return () => {
-    
-    }
-  }, [])
+    getUserFromStorage().then((value:User) => {
+      setUser(value);
+    })
+    return () => {};
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -176,10 +166,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         user,
         headerItem,
         login: (email, password) => {
-          authenticate(email,password).then((token) => {
-            login(email,password).then((value:any) => {
-                setUser(value);
-              });
+          authenticate(email, password).then((token) => {
+            login(email, password).then((value: any) => {
+              setUser(value);
+            });
           });
         },
         logout: () => {
@@ -188,9 +178,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         refreshToken: (user) => {
           return refreshToken(user);
         },
-        setHeaderItem: (item:any) => {
+        setHeaderItem: (item: any) => {
           setHeaderItem(item);
-        }
+        },
       }}
     >
       {children}

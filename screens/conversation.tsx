@@ -1,11 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  DeviceEventEmitter,
-  KeyboardAvoidingView,
-  View
-} from "react-native";
+import { DeviceEventEmitter, KeyboardAvoidingView, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import InputField from "../components/inputField";
 import Message from "../components/Message";
@@ -13,6 +9,7 @@ import { AuthContext } from "../Providers/AuthProvider";
 import { SocketContext } from "../Providers/SocketProvider";
 import { URI } from "./../constants";
 
+let freshData: any;
 
 const Conversation = ({ route }: any) => {
   const item = route.params.item;
@@ -21,27 +18,29 @@ const Conversation = ({ route }: any) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, refreshToken } = useContext(AuthContext);
-  const { sendMessage, isTyping, setActiveConversationId } = useContext(SocketContext);
+  const { sendMessage, isTyping, setActiveConversationId } = useContext(
+    SocketContext
+  );
 
   useEffect(() => {
     getConversation();
     setActiveConversationId(item.id);
+    const messageEvent = DeviceEventEmitter.addListener(
+      "MESSAGE-EVENT",
+      (msg: any) => {
+        if (msg.conversationId === item.id) {
+          let temp = [...freshData];
+          temp.push(msg);
+          setData(temp);
+          freshData = temp;
+        }
+      }
+    );
+
     return () => {
       messageEvent.remove();
     };
   }, []);
-
-  const messageEvent = DeviceEventEmitter.addListener(
-    "MESSAGE-EVENT",
-    (msg: any) => {
-      if(msg.conversationId === item.id){
-        let temp = [...data];
-        temp.push(msg);
-        setData(temp);
-      }
-      
-    }
-  );
 
   const getConversation = async () => {
     let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
@@ -61,12 +60,13 @@ const Conversation = ({ route }: any) => {
       });
 
       let json = await response.json();
-      if(json.message === "JWT token Expired"){
-        refreshToken(user).then((value:any) => {
+      if (json.message === "JWT token Expired") {
+        refreshToken(user).then((value: any) => {
           getConversation();
         });
       }
       setData(json.message);
+      freshData = json.message;
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -111,6 +111,7 @@ const Conversation = ({ route }: any) => {
       let temp = [...data];
       temp.push(obj);
       setData(temp);
+      freshData = temp;
       setCount(count + 1);
       setText("");
       typing("");
@@ -155,6 +156,8 @@ const Conversation = ({ route }: any) => {
       <FlatList
         style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
         ref={scrollRef}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={30}
         onContentSizeChange={() =>
           scrollRef.current?.scrollToEnd({ animated: true })
         }

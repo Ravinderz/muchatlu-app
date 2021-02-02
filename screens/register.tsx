@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import InputField from "../components/inputField";
 import { AuthNavProps } from "../params/AuthParamList";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 
 const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
   const [username, setUsername] = useState("");
@@ -34,7 +34,7 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
     };
     try {
       let response = await fetch(URI.register, {
-        method:"POST",
+        method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -80,9 +80,22 @@ const Register = ({ navigation, route }: AuthNavProps<"Register">) => {
         </View>
         <View style={styles.formContainer}>
           <Text style={{ fontSize: 24, marginBottom: 20 }}>Sign Up</Text>
-          <InputField placeholder="Username" value={username} onChangeText={setUsername}/>
-          <InputField placeholder="Email address" value={email} onChangeText={setEmail}/>
-          <InputField placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
+          <InputField
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <InputField
+            placeholder="Email address"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <InputField
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true}
+          />
           <TouchableOpacity
             style={styles.btnPrimary}
             onPress={() => registerUser()}

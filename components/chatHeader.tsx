@@ -25,31 +25,7 @@ const ChatHeader = (props: any) => {
   const [isOnline, setIsOnline] = useState("");
   const [typingItem, setTypingItem] = useState();
 
-  const loginEvent = DeviceEventEmitter.addListener(
-    "LOGIN-EVENT",
-    (msg: any) => {
-      console.log("received message here");
-      if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
-        setIsOnline(msg.online ? "Online" : "Offline");
-      }
-    }
-  );
-
-  const logoutEvent = DeviceEventEmitter.addListener(
-    "LOGOUT-EVENT",
-    (msg: any) => {
-      if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
-        setIsOnline(msg.online ? "Online" : "Offline");
-      }
-    }
-  );
-
-  const typingEvent = DeviceEventEmitter.addListener(
-    "TYPING-EVENT",
-    (msg: any) => {
-      setTypingItem(msg);
-    }
-  );
+ 
 
   const getUserPresence = async () => {
     const id = user.id === data.userIdFrom ? data.userIdTo : data.userIdFrom;
@@ -83,6 +59,33 @@ const ChatHeader = (props: any) => {
 
   useEffect(() => {
     getUserPresence();
+
+    const loginEvent = DeviceEventEmitter.addListener(
+      "LOGIN-EVENT",
+      (msg: any) => {
+        console.log("received message here");
+        if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
+          setIsOnline(msg.online ? "Online" : "Offline");
+        }
+      }
+    );
+  
+    const logoutEvent = DeviceEventEmitter.addListener(
+      "LOGOUT-EVENT",
+      (msg: any) => {
+        if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
+          setIsOnline(msg.online ? "Online" : "Offline");
+        }
+      }
+    );
+  
+    const typingEvent = DeviceEventEmitter.addListener(
+      "TYPING-EVENT",
+      (msg: any) => {
+        setTypingItem(msg);
+      }
+    );
+
     return () => {
       loginEvent.remove();
       logoutEvent.remove();

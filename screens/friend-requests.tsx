@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useState } from "react";
 import {
   DeviceEventEmitter,
@@ -31,20 +31,13 @@ const FriendRequest = () => {
   const [text, setText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const friendRequestEvent = DeviceEventEmitter.addListener(
-    "FRIEND-REQUEST-UPDATE-EVENT",
-    () => {
-      getFriendRequests();
-    }
-  );
-
   const getFriendRequests = async () => {
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {
       storedToken = JSON.parse(tokenObj);
     }
-  
+
     try {
       let response = await fetch(`${URI.getFriendRequests}/${user.id}`, {
         headers: {
@@ -54,9 +47,9 @@ const FriendRequest = () => {
         },
       });
       let json = await response.json();
-      if(json.message === "JWT token Expired"){
+      if (json.message === "JWT token Expired") {
         setLoading(true);
-        refreshToken(user).then((value:any) => {
+        refreshToken(user).then((value: any) => {
           getFriendRequests();
         });
       }
@@ -78,10 +71,10 @@ const FriendRequest = () => {
       });
 
       let json = await response.json();
-      if(json.message === "JWT token Expired"){
+      if (json.message === "JWT token Expired") {
         setLoading(true);
-        refreshToken(user).then((value:any) => {
-            getUserDetails(email,storedToken);
+        refreshToken(user).then((value: any) => {
+          getUserDetails(email, storedToken);
         });
       }
       return json;
@@ -151,9 +144,9 @@ const FriendRequest = () => {
 
         let json = await response.json();
         if (json) {
-          if(json.message === "JWT token Expired"){
+          if (json.message === "JWT token Expired") {
             setLoading(true);
-            refreshToken(user).then((value:any) => {
+            refreshToken(user).then((value: any) => {
               getFriendRequests();
             });
           }
@@ -176,6 +169,14 @@ const FriendRequest = () => {
 
   useEffect(() => {
     getFriendRequests();
+
+    const friendRequestEvent = DeviceEventEmitter.addListener(
+      "FRIEND-REQUEST-UPDATE-EVENT",
+      () => {
+        getFriendRequests();
+      }
+    );
+
     return () => {
       friendRequestEvent.remove();
     };
@@ -185,8 +186,8 @@ const FriendRequest = () => {
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
         skeletonLoading()
-        // <ActivityIndicator/>
       ) : (
+        // <ActivityIndicator/>
         <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <InputField

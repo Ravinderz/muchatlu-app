@@ -4,47 +4,45 @@ import {
   Image,
   StyleSheet,
   Text,
-
-  TouchableOpacity, View
+  TouchableOpacity,
+  View
 } from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
 
-const Profile = ({route}:any) => {
-
+const Profile = ({ route }: any) => {
   const item = route.params.item;
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     setLoading(false);
-  }, [])
+  }, []);
 
-  
-    let temp = item.avatar.split("/");
-    let name = temp[temp.length - 1].split(".")[0];
-    const imgSrc = IMAGES[name];
-    return (
-      <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
-        {loading ? (
-          <ActivityIndicator />
-        ) : (
-          <View style={styles.container}>
-            <Image style={styles.avatar} source={imgSrc} />
-            <Text style={styles.username}>{item.username}</Text>
-            <Text style={styles.email}>{item.email}</Text>
-            <Text style={styles.status}>{item.status}</Text>
-            <Text style={styles.status}>
-              {item.isOnline ? "Online" : "Offline"}
-            </Text>
-            <TouchableOpacity style={styles.btnPrimary}>
-              <Text style={{ color: "#FFF", fontWeight:"600" }}>Start Chat</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    );
-}
+  let temp = item.avatar.split("/");
+  let name = temp[temp.length - 1].split(".")[0];
+  const imgSrc = IMAGES[name];
+  return (
+    <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
+      {loading ? (
+        <ActivityIndicator />
+      ) : (
+        <View style={styles.container}>
+          <Image style={styles.avatar} source={imgSrc} />
+          <Text style={styles.username}>{item.username}</Text>
+          <Text style={styles.email}>{item.email}</Text>
+          <Text style={styles.status}>{item.status}</Text>
+          <Text style={styles.status}>
+            {item.isOnline ? "Online" : "Offline"}
+          </Text>
+          <TouchableOpacity style={styles.btnPrimary}>
+            <Text style={{ color: "#FFF", fontWeight: "600" }}>Start Chat</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+};
 
 export default Profile;
 
@@ -55,7 +53,7 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
-    marginTop:50
+    marginTop: 50,
   },
   avatar: {
     width: 150,

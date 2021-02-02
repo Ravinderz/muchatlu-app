@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useState } from "react";
 import {
   DeviceEventEmitter,
@@ -19,15 +19,16 @@ const Chat = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const { user, setHeaderItem, refreshToken } = useContext(AuthContext);
 
-  const friendRequestEvent = DeviceEventEmitter.addListener(
-    "FRIEND-REQUEST-UPDATE-EVENT",
-    () => {
-      getConversations();
-    }
-  );
-
   useEffect(() => {
     getConversations();
+
+    const friendRequestEvent = DeviceEventEmitter.addListener(
+      "FRIEND-REQUEST-UPDATE-EVENT",
+      () => {
+        getConversations();
+      }
+    );
+
     return () => {
       friendRequestEvent.remove();
     };
@@ -48,17 +49,16 @@ const Chat = ({ navigation }: any) => {
           Authorization: `Bearer ${storedToken.token}`,
         },
       });
-      
-      console.log("chat response")
+
+      console.log("chat response");
       let json = await response.json();
-      if(json.message === "JWT token Expired"){
-        setLoading(true);        
-        refreshToken(user).then((value:any) => {
-          getConversations();  
+      if (json.message === "JWT token Expired") {
+        setLoading(true);
+        refreshToken(user).then((value: any) => {
+          getConversations();
         });
-        
       }
-      
+
       setConversations(json);
       setLoading(false);
     } catch (error) {
@@ -69,8 +69,8 @@ const Chat = ({ navigation }: any) => {
   const skeletonLoading = () => {
     return (
       <>
-       <ListItemSkeleton />
-       <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
       </>
     );
   };
@@ -79,10 +79,12 @@ const Chat = ({ navigation }: any) => {
     <View style={{ flex: 1, padding: 16, backgroundColor: "#fff" }}>
       {loading ? (
         skeletonLoading()
-        // <ActivityIndicator/>
       ) : (
+        // <ActivityIndicator/>
         <View>
-          <TouchableOpacity onPress={() => getConversations()}><Text>Refresh</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => getConversations()}>
+            <Text>Refresh</Text>
+          </TouchableOpacity>
           <InputField placeholder="Search" width="100%" />
           <FlatList
             data={conversations}
