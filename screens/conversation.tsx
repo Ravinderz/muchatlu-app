@@ -13,16 +13,14 @@ import { AuthContext } from "../Providers/AuthProvider";
 import { SocketContext } from "../Providers/SocketProvider";
 import { URI } from "./../constants";
 
-interface conversationProps {}
 
 const Conversation = ({ route }: any) => {
-  const [typingItem, setTypingItem] = useState(route.params.typingItem);
   const item = route.params.item;
   const [text, setText] = useState("");
   const [count, setCount] = useState(12);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const { user, refreshToken } = useContext(AuthContext);
   const { sendMessage, isTyping } = useContext(SocketContext);
 
   useEffect(() => {
@@ -62,6 +60,11 @@ const Conversation = ({ route }: any) => {
       setData(json.message);
       setLoading(false);
     } catch (error) {
+      if(error.message === "JWT token Expired"){
+        refreshToken(user).then((value:any) => {
+          getConversation();
+        });
+      }
       console.error(error);
     }
   };

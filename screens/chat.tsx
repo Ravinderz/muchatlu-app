@@ -4,6 +4,7 @@ import {
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View
 } from "react-native";
@@ -16,7 +17,7 @@ import { URI } from "./../constants";
 const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user, setHeaderItem } = useContext(AuthContext);
+  const { user, setHeaderItem, refreshToken } = useContext(AuthContext);
 
   const friendRequestEvent = DeviceEventEmitter.addListener(
     "FRIEND-REQUEST-UPDATE-EVENT",
@@ -47,8 +48,17 @@ const Chat = ({ navigation }: any) => {
           Authorization: `Bearer ${storedToken.token}`,
         },
       });
-
+      
+      console.log("chat response")
       let json = await response.json();
+      if(json.message === "JWT token Expired"){
+        setLoading(true);        
+        refreshToken(user).then((value:any) => {
+          getConversations();  
+        });
+        
+      }
+      
       setConversations(json);
       setLoading(false);
     } catch (error) {
@@ -72,6 +82,7 @@ const Chat = ({ navigation }: any) => {
         // <ActivityIndicator/>
       ) : (
         <View>
+          <TouchableOpacity onPress={() => getConversations()}><Text>Refresh</Text></TouchableOpacity>
           <InputField placeholder="Search" width="100%" />
           <FlatList
             data={conversations}

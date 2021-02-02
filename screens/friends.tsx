@@ -13,7 +13,7 @@ import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { URI } from './../constants';
 
-const getFriends = async (user: any, setLoading: any, setFriends: any) => {
+const getFriends = async (user: any, setLoading: any, setFriends: any, refreshToken:any) => {
   let tokenObj = await AsyncStorage.getItem("token");
   let storedToken = null;
   if (tokenObj !== null) {
@@ -32,6 +32,12 @@ const getFriends = async (user: any, setLoading: any, setFriends: any) => {
     );
 
     let json = await response.json();
+    if(json.message === "JWT token Expired"){
+      setLoading(true);
+      refreshToken(user).then((value:any) => {
+        getFriends(user, setLoading, setFriends,refreshToken);
+      });
+    }
     setFriends(json.friends);
     setLoading(false);
   } catch (error) {
@@ -52,15 +58,15 @@ const Friend = ({ navigation }: any) => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
-  const { user } = useContext(AuthContext);
+  const { user, refreshToken } = useContext(AuthContext);
 
 
   const friendRequestEvent = DeviceEventEmitter.addListener("FRIEND-REQUEST-UPDATE-EVENT", () => {
-    getFriends(user, setLoading, setFriends);
+    getFriends(user, setLoading, setFriends,refreshToken);
   });
 
   useEffect(() => {
-    getFriends(user, setLoading, setFriends);
+    getFriends(user, setLoading, setFriends,refreshToken);
     return () => {
       friendRequestEvent.remove();
     }
@@ -71,7 +77,7 @@ const Friend = ({ navigation }: any) => {
     console.log(text);
 
     if(!text && text.trim() === ""){
-      getFriends(user, setLoading, setFriends);
+      getFriends(user, setLoading, setFriends, refreshToken);
       return;
     }
     let tokenObj = await AsyncStorage.getItem("token");
@@ -93,6 +99,13 @@ const Friend = ({ navigation }: any) => {
   
       let json = await response.json();      
       console.log("friend json",json)
+      if(json.message === "JWT token Expired"){
+        setLoading(true);
+        refreshToken(user).then(() => {
+          console.log("before the action value caasdf")
+          filterFriends(text); 
+        });
+      }
       setFriends(json);
       setLoading(false);
     } catch (error) {

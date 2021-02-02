@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { DeviceEventEmitter } from "react-native";
 import SockJS from "sockjs-client"; // Note this line
 import Stomp from "stompjs";
+// import { LOG } from "./../components/logger";
 import { URI } from "./../constants";
 import { AuthContext } from "./AuthProvider";
 
@@ -19,6 +20,7 @@ let stompClient: any;
 let isConnected = false;
 
 console.log(stompClient)
+// LOG.info("stompCLient :: ",stompClient);
 
 const userLogoutEvent = DeviceEventEmitter.addListener(
   "USER-LOGOUT-EVENT",
@@ -77,6 +79,7 @@ const connect = (user: any) => {
   const ws = new SockJS(serverUrl);
   
   console.log("socket is connected ::: ",isConnected)
+  // LOG.info("socket is connected ::: ",isConnected)
   
     stompClient = Stomp.over(ws);    
     stompClient.connect({ userId: `${user.id}` }, function (frame: any) {

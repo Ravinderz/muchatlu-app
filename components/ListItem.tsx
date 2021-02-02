@@ -39,7 +39,7 @@ const get12HourFormat = (value: any) => {
 const ListItem = (props: any) => {
   const item = props.item;
   const listType = props.listType;
-  const { user } = useContext(AuthContext);
+  const { user, refreshToken } = useContext(AuthContext);
   const userId = user.id;
 
   if (listType && listType === "friends") {
@@ -129,6 +129,11 @@ const ListItem = (props: any) => {
 
         let json = await response.json();
         if (json) {
+          if(json.message === "JWT token Expired"){
+            refreshToken(user).then((value:any) => {
+              updateFriendRequest(status);
+            });
+          }
           DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", json);
         }
         return json;

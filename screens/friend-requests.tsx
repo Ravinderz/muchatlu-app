@@ -15,34 +15,6 @@ import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { URI } from "./../constants";
 
-const getFriendRequests = async (
-  user: any,
-  setLoading: any,
-  setFriendRequests: any
-) => {
-  let tokenObj = await AsyncStorage.getItem("token");
-  let storedToken = null;
-  if (tokenObj !== null) {
-    storedToken = JSON.parse(tokenObj);
-  }
-
-  try {
-    let response = await fetch(`${URI.getFriendRequests}/${user.id}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${storedToken.token}`,
-      },
-    });
-
-    let json = await response.json();
-    setFriendRequests(json);
-    setLoading(false);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const skeletonLoading = () => {
   return (
     <>
@@ -55,16 +27,45 @@ const skeletonLoading = () => {
 const FriendRequest = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const { user, refreshToken } = useContext(AuthContext);
   const [text, setText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const friendRequestEvent = DeviceEventEmitter.addListener(
     "FRIEND-REQUEST-UPDATE-EVENT",
     () => {
-      getFriendRequests(user, setLoading, setFriendRequests);
+      getFriendRequests();
     }
   );
+
+  const getFriendRequests = async () => {
+    let tokenObj = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if (tokenObj !== null) {
+      storedToken = JSON.parse(tokenObj);
+    }
+  
+    try {
+      let response = await fetch(`${URI.getFriendRequests}/${user.id}`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken.token}`,
+        },
+      });
+      let json = await response.json();
+      if(json.message === "JWT token Expired"){
+        setLoading(true);
+        refreshToken(user).then((value:any) => {
+          getFriendRequests();
+        });
+      }
+      setFriendRequests(json);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getUserDetails = async (email: string, storedToken: any) => {
     try {
@@ -77,9 +78,14 @@ const FriendRequest = () => {
       });
 
       let json = await response.json();
+      if(json.message === "JWT token Expired"){
+        setLoading(true);
+        refreshToken(user).then((value:any) => {
+            getUserDetails(email,storedToken);
+        });
+      }
       return json;
     } catch (error) {
-      console.log(error.message);
       setErrorMessage(error.message);
       setTimeout(() => {
         setErrorMessage("");
@@ -145,7 +151,13 @@ const FriendRequest = () => {
 
         let json = await response.json();
         if (json) {
-          getFriendRequests(user, setLoading, setFriendRequests);
+          if(json.message === "JWT token Expired"){
+            setLoading(true);
+            refreshToken(user).then((value:any) => {
+              getFriendRequests();
+            });
+          }
+          getFriendRequests();
           setText("");
         }
         return json;
@@ -163,7 +175,7 @@ const FriendRequest = () => {
   };
 
   useEffect(() => {
-    getFriendRequests(user, setLoading, setFriendRequests);
+    getFriendRequests();
     return () => {
       friendRequestEvent.remove();
     };

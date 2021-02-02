@@ -17,7 +17,7 @@ export const AuthContext = React.createContext<{
   headerItem: any;
   login: (email: string, password: string) => void;
   logout: () => void;
-  refreshToken: (user: User) => void;
+  refreshToken: (user: User) => any;
   setHeaderItem: (item: any) => void;
   
 }>({
@@ -73,9 +73,10 @@ const refreshToken = async (user: User) => {
 
     let json = await response.json();
     storedToken.token = json.token;
-    AsyncStorage.removeItem("token");
-    AsyncStorage.setItem("token",storedToken);
-    return json;
+    console.log(storedToken);
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.setItem("token",JSON.stringify(storedToken));
+    return 'Completed'
   } catch (error) {
     console.error(error);
   }
@@ -186,7 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           logout();
         },
         refreshToken: (user) => {
-          refreshToken(user);
+          return refreshToken(user);
         },
         setHeaderItem: (item:any) => {
           setHeaderItem(item);

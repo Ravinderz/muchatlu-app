@@ -13,7 +13,7 @@ import { URI } from "./../constants";
 
 const ChatHeader = (props: any) => {
   //   const item = props.item;
-  const { user, headerItem } = useContext(AuthContext);
+  const { user, headerItem, refreshToken } = useContext(AuthContext);
   const data = headerItem;
   const userId = user.id;
   let temp =
@@ -70,6 +70,11 @@ const ChatHeader = (props: any) => {
       });
 
       let json = await response.json();
+      if(json.message === "JWT token Expired"){
+        refreshToken(user).then((value:any) => {
+          getUserPresence();
+        });
+      }
       setIsOnline(json.online ? "Online" : "Offline");
     } catch (error) {
       console.error(error);
