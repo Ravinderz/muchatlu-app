@@ -102,7 +102,7 @@ const ChatHeader = (props: any) => {
         </Text>
         <Text style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
           {typingItem &&
-          typingItem.userIdFrom === data.userIdTo &&
+          (typingItem.userIdFrom === data.userIdTo || typingItem.userIdFrom === data.userIdFrom)&&
           typingItem.isTyping
             ? "typing..."
             : isOnline}

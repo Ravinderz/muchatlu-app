@@ -34,7 +34,8 @@ export default function Login({ navigation, route }: AuthNavProps<"Login">) {
   }
 
   useEffect(() => {
-    getUserFromStorage();
+    //getUserFromStorage();
+    setLoading(false);
     return () => {
     }
   }, [])

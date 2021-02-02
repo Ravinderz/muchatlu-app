@@ -73,7 +73,6 @@ const refreshToken = async (user: User) => {
 
     let json = await response.json();
     storedToken.token = json.token;
-    console.log(storedToken);
     await AsyncStorage.removeItem("token");
     await AsyncStorage.setItem("token",JSON.stringify(storedToken));
     return 'Completed'
@@ -163,9 +162,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
 
-    getUserFromStorage().then((value:User) => {
-      setUser(value);
-    })
+    // getUserFromStorage().then((value:User) => {
+    //   setUser(value);
+    // })
     return () => {
     
     }

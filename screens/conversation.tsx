@@ -21,10 +21,11 @@ const Conversation = ({ route }: any) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, refreshToken } = useContext(AuthContext);
-  const { sendMessage, isTyping } = useContext(SocketContext);
+  const { sendMessage, isTyping, setActiveConversationId } = useContext(SocketContext);
 
   useEffect(() => {
     getConversation();
+    setActiveConversationId(item.id);
     return () => {
       messageEvent.remove();
     };
@@ -33,9 +34,12 @@ const Conversation = ({ route }: any) => {
   const messageEvent = DeviceEventEmitter.addListener(
     "MESSAGE-EVENT",
     (msg: any) => {
-      let temp = [...data];
-      temp.push(msg);
-      setData(temp);
+      if(msg.conversationId === item.id){
+        let temp = [...data];
+        temp.push(msg);
+        setData(temp);
+      }
+      
     }
   );
 
@@ -57,14 +61,14 @@ const Conversation = ({ route }: any) => {
       });
 
       let json = await response.json();
-      setData(json.message);
-      setLoading(false);
-    } catch (error) {
-      if(error.message === "JWT token Expired"){
+      if(json.message === "JWT token Expired"){
         refreshToken(user).then((value:any) => {
           getConversation();
         });
       }
+      setData(json.message);
+      setLoading(false);
+    } catch (error) {
       console.error(error);
     }
   };

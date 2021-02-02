@@ -26,6 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "useNextNotificationsApi": true,
       "package": "in.Muchatlu.muchatlu",
       "versionCode": 2
     },
