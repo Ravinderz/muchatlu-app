@@ -164,11 +164,11 @@ const Conversation = ({ route }: any) => {
         ref={scrollRef}
         removeClippedSubviews={true}
         maxToRenderPerBatch={30}
-        inverted={true}
-        contentContainerStyle={{ flexDirection: 'column-reverse' }}
-        // onContentSizeChange={() =>
-        //   scrollRef.current?.scrollToEnd({ animated: false })
-        // }
+        // inverted={true}
+        // contentContainerStyle={{ flexDirection: 'column-reverse' }}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({ animated: false })
+        }
         data={data}
         keyExtractor={(item: any, idx) =>
           (item?.conversationId + idx).toString()

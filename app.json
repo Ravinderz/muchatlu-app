@@ -10,8 +10,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification":{
+      "icon":"./assets/notification_icon.png"
+   },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "enabled": true,
+      "fallbackToCacheTimeout": 30000
     },
     "assetBundlePatterns": [
       "**/*"
@@ -29,10 +33,10 @@
       },
       "useNextNotificationsApi": true,
       "package": "in.Muchatlu.muchatlu",
-      "versionCode": 4
+      "versionCode": 6
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/notification_icon.png"
     }
   }
 }
