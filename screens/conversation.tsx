@@ -18,13 +18,19 @@ const Conversation = ({ route }: any) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, refreshToken } = useContext(AuthContext);
-  const { sendMessage, isTyping, setActiveConversationId } = useContext(
+  const { sendMessage, isTyping, setActiveConversationId, setUnreadconversationsMessagesCount,unreadconversationsMessagesCount } = useContext(
     SocketContext
   );
 
   useEffect(() => {
     getConversation();
     setActiveConversationId(item.id);
+    let obj = unreadconversationsMessagesCount;
+    console.log(obj)
+    obj[item.id] = 0
+    console.log(">>>>>>>>>>>>>>>>>>>>>  trigger");
+    DeviceEventEmitter.emit("UNREAD-EVENT", "Visited");
+    setUnreadconversationsMessagesCount(obj);
     const messageEvent = DeviceEventEmitter.addListener(
       "MESSAGE-EVENT",
       (msg: any) => {
@@ -158,9 +164,11 @@ const Conversation = ({ route }: any) => {
         ref={scrollRef}
         removeClippedSubviews={true}
         maxToRenderPerBatch={30}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
+        inverted={true}
+        contentContainerStyle={{ flexDirection: 'column-reverse' }}
+        // onContentSizeChange={() =>
+        //   scrollRef.current?.scrollToEnd({ animated: false })
+        // }
         data={data}
         keyExtractor={(item: any, idx) =>
           (item?.conversationId + idx).toString()

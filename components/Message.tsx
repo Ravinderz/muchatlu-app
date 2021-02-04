@@ -30,6 +30,7 @@ const Message = (props: any) => {
   const { user } = useContext(AuthContext);
   const userId = user.id;
   const item = data;
+  item.read = true;
   let time;
   if(item.timestamp){
     time = adjustForTimezone(item.timestamp);

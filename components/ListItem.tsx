@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
-import { URI } from './../constants';
+import { URI } from "./../constants";
 
 const adjustForTimezone = (value: Date) => {
   if (value) {
@@ -39,6 +39,7 @@ const get12HourFormat = (value: any) => {
 const ListItem = (props: any) => {
   const item = props.item;
   const listType = props.listType;
+  const unread = props.unread;
   const { user, refreshToken } = useContext(AuthContext);
   const userId = user.id;
 
@@ -68,8 +69,12 @@ const ListItem = (props: any) => {
     let name = temp[temp.length - 1].split(".")[0];
     const imgSrc = IMAGES[name];
     const itemTime = adjustForTimezone(item.lastMessageTimestamp);
-    const [showLastMessage, setShowLastMessage] = useState(item && item.lastMessageFrom ? true : false);
-    console.log("showLastMessage",showLastMessage)
+    const [showLastMessage, setShowLastMessage] = useState(
+      item && item.lastMessageFrom ? true : false
+    );
+    const countTenPlus = "10+";
+    console.log("showLastMessage", showLastMessage);
+    console.log("unread", unread);
 
     return (
       <View style={styles.container}>
@@ -80,17 +85,45 @@ const ListItem = (props: any) => {
           </Text>
           {/* {showLastMessage} ? ( */}
           <Text style={{ fontSize: 12, color: "#A4A4A4" }} numberOfLines={1}>
-            {item?.lastMessageFrom}:{item.lastMessage}  
+            {item?.lastMessageFrom}:{item.lastMessage}
           </Text>
           {/* ):(<></>) */}
         </View>
-        <View>
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
           <Text style={styles.time}>{itemTime}</Text>
+
+          {unread && unread[item.id] ? (
+            <View
+              style={{
+                backgroundColor: "#6159E6",
+                flexWrap: "wrap",
+                borderRadius: 15,
+                marginTop: 5,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  padding: 5,
+                  paddingLeft:10,
+                  paddingRight:10,
+                  fontSize: 12,
+                }}
+              >
+                {unread && unread[item.id] && unread[item.id] !== 0
+                  ? unread[item.id] < 10
+                    ? unread[item.id]
+                    : countTenPlus
+                  : ""}
+              </Text>
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </View>
     );
   } else if (listType && listType === "friendRequests") {
-
     let temp =
       userId === item.requestFromUserId
         ? item.avatarTo.split("/")
@@ -114,23 +147,20 @@ const ListItem = (props: any) => {
       }
       item.status = status;
       try {
-        let response = await fetch(
-          URI.updateFriendRequest,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${storedToken.token}`,
-            },
-            body: JSON.stringify(item),
-          }
-        );
+        let response = await fetch(URI.updateFriendRequest, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken.token}`,
+          },
+          body: JSON.stringify(item),
+        });
 
         let json = await response.json();
         if (json) {
-          if(json.message === "JWT token Expired"){
-            refreshToken(user).then((value:any) => {
+          if (json.message === "JWT token Expired") {
+            refreshToken(user).then((value: any) => {
               updateFriendRequest(status);
             });
           }

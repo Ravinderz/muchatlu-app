@@ -1,7 +1,7 @@
 const devBaseUrl =  'http://192.168.0.103:8080';
 const prodBaseUrl =  'http://muchatlu-backend.herokuapp.com';
 const baseUrl = devBaseUrl;
-// const baseUrl = prodBaseUrl;
+//const baseUrl = prodBaseUrl;
 
 
 const URI = {
@@ -19,9 +19,11 @@ const URI = {
     getConversation:`${baseUrl}/getConversation`,
     getUserDetails:`${baseUrl}/getUserDetails`,
     getUserPresence:`${baseUrl}/getUserOnlinePresence`,
+    updateUserPresence:`${baseUrl}/updateUserPresence`,
     updateUserDetails:`${baseUrl}/updateUserDetails`,
     filterFriends:`${baseUrl}/filterFriends`,
-    socketConnect:`${baseUrl}/chat`
+    socketConnect:`${baseUrl}/chat`,
+    updateUserPushToken:`${baseUrl}/updateUserPushToken`
 
 }
 

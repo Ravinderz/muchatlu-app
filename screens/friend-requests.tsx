@@ -27,11 +27,13 @@ const skeletonLoading = () => {
 const FriendRequest = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [listLoading, setlistLoading] = useState(false);
   const { user, refreshToken } = useContext(AuthContext);
   const [text, setText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const getFriendRequests = async () => {
+    setlistLoading(true);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {
@@ -55,6 +57,7 @@ const FriendRequest = () => {
       }
       setFriendRequests(json);
       setLoading(false);
+      setlistLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -218,13 +221,19 @@ const FriendRequest = () => {
               <></>
             )}
           </View>
-          <FlatList
-            data={friendRequests}
-            keyExtractor={(item: any) => item.id.toString()}
-            renderItem={({ item }: any) => (
-              <ListItem item={item} listType={"friendRequests"} />
-            )}
-          />
+          {listLoading ? (
+            skeletonLoading()
+          ) : (
+            <FlatList
+              data={friendRequests}
+              keyExtractor={(item: any) => item.id.toString()}
+              refreshing={listLoading}
+              onRefresh={() => getFriendRequests()}
+              renderItem={({ item }: any) => (
+                <ListItem item={item} listType={"friendRequests"} />
+              )}
+            />
+          )}
         </View>
       )}
     </View>

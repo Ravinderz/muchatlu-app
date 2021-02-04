@@ -22,13 +22,14 @@
       "buildNumber": "1.0.1"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "useNextNotificationsApi": true,
       "package": "in.Muchatlu.muchatlu",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"

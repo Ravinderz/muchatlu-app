@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "369221876301",
+    "project_id": "muchatlu-4e9ad",
+    "storage_bucket": "muchatlu-4e9ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369221876301:android:ac0e578c12fc8aa6fd3a04",
+        "android_client_info": {
+          "package_name": "in.Muchatlu.muchatlu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369221876301-h9jqgboi0ovsnlo1ihl2f7sltj4t6ist.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ5GOZhfY7UuO61cbw_YANuQVbCM6kH74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369221876301-h9jqgboi0ovsnlo1ihl2f7sltj4t6ist.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

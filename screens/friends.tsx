@@ -8,39 +8,7 @@ import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { URI } from "./../constants";
 
-const getFriends = async (
-  user: any,
-  setLoading: any,
-  setFriends: any,
-  refreshToken: any
-) => {
-  let tokenObj = await AsyncStorage.getItem("token");
-  let storedToken = null;
-  if (tokenObj !== null) {
-    storedToken = JSON.parse(tokenObj);
-  }
-  try {
-    let response = await fetch(`${URI.getFriends}/${user.id}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${storedToken.token}`,
-      },
-    });
 
-    let json = await response.json();
-    if (json.message === "JWT token Expired") {
-      setLoading(true);
-      refreshToken(user).then((value: any) => {
-        getFriends(user, setLoading, setFriends, refreshToken);
-      });
-    }
-    setFriends(json.friends);
-    setLoading(false);
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 const skeletonLoading = () => {
   return (
@@ -56,14 +24,15 @@ const Friend = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState("");
   const { user, refreshToken } = useContext(AuthContext);
+  const [listLoading, setlistLoading] = useState(false);
 
   useEffect(() => {
-    getFriends(user, setLoading, setFriends, refreshToken);
+    getFriends();
 
     const friendRequestEvent = DeviceEventEmitter.addListener(
       "FRIEND-REQUEST-UPDATE-EVENT",
       () => {
-        getFriends(user, setLoading, setFriends, refreshToken);
+        getFriends();
       }
     );
 
@@ -72,11 +41,42 @@ const Friend = ({ navigation }: any) => {
     };
   }, []);
 
+  const getFriends = async () => {
+    setlistLoading(true);
+    let tokenObj = await AsyncStorage.getItem("token");
+    let storedToken = null;
+    if (tokenObj !== null) {
+      storedToken = JSON.parse(tokenObj);
+    }
+    try {
+      let response = await fetch(`${URI.getFriends}/${user.id}`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken.token}`,
+        },
+      });
+  
+      let json = await response.json();
+      if (json.message === "JWT token Expired") {
+        setLoading(true);
+        refreshToken(user).then((value: any) => {
+          getFriends();
+        });
+      }
+      setFriends(json.friends);
+      setLoading(false);
+      setlistLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const filterFriends = async (text: string) => {
     console.log(text);
 
     if (!text && text.trim() === "") {
-      getFriends(user, setLoading, setFriends, refreshToken);
+      getFriends();
       return;
     }
     let tokenObj = await AsyncStorage.getItem("token");
@@ -124,9 +124,14 @@ const Friend = ({ navigation }: any) => {
             }}
             value={text}
           />
+           {listLoading ? (
+        skeletonLoading()
+      ) : (
           <FlatList
             data={friends}
             keyExtractor={(item: any) => item.id.toString()}
+            refreshing={listLoading}
+              onRefresh={() =>  getFriends()}
             renderItem={({ item }: any) => (
               <TouchableOpacity
                 onPress={() => {
@@ -136,7 +141,7 @@ const Friend = ({ navigation }: any) => {
                 <ListItem item={item} listType={"friends"} />
               </TouchableOpacity>
             )}
-          />
+          />)}
         </View>
       )}
     </View>

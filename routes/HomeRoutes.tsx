@@ -17,7 +17,12 @@ const Tab = createMaterialTopTabNavigator();
 
 function HomeStack() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator  tabBarOptions={{
+      activeTintColor:"#6159E6",
+      inactiveTintColor :"#bfbfbf",
+      labelStyle: { fontWeight:"700"},
+      indicatorStyle:{backgroundColor:"#6159E6"}
+    }}>
       <Tab.Screen name="Chats" component={Chat} />
       <Tab.Screen name="Friends" component={Friend} />
       <Tab.Screen name="Friend Requests" component={FriendRequest} />

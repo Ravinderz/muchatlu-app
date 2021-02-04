@@ -4,7 +4,7 @@ import {
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
-  Text,
+
   TouchableOpacity,
   View
 } from "react-native";
@@ -12,16 +12,25 @@ import InputField from "../components/inputField";
 import ListItem from "../components/ListItem";
 import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
+import { SocketContext } from "../Providers/SocketProvider";
 import { URI } from "./../constants";
-
+let boolObj = false;
 const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, setHeaderItem, refreshToken } = useContext(AuthContext);
+  const {
+    setActiveConversationId,
+    unreadconversationsMessagesCount,
+  } = useContext(SocketContext);
+  const [unread, setUnread] = useState({});
+  const [rerender, setRerender] = useState(false);
+  const [listLoading, setlistLoading] = useState(false);
 
   useEffect(() => {
     getConversations();
-
+    setActiveConversationId("0");
+    setUnread(unreadconversationsMessagesCount);
     const friendRequestEvent = DeviceEventEmitter.addListener(
       "FRIEND-REQUEST-UPDATE-EVENT",
       () => {
@@ -29,12 +38,26 @@ const Chat = ({ navigation }: any) => {
       }
     );
 
+    const unreadEvent = DeviceEventEmitter.addListener("UNREAD-EVENT", () => {
+      setActiveConversationId("0");
+      setUnread(unreadconversationsMessagesCount);
+      if (boolObj) {
+        setRerender(false);
+        boolObj = false;
+      } else {
+        setRerender(true);
+        boolObj = true;
+      }
+    });
+
     return () => {
       friendRequestEvent.remove();
+      unreadEvent.remove();
     };
   }, []);
 
   const getConversations = async () => {
+    setlistLoading(true);
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {
@@ -61,6 +84,7 @@ const Chat = ({ navigation }: any) => {
 
       setConversations(json);
       setLoading(false);
+      setlistLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -82,13 +106,16 @@ const Chat = ({ navigation }: any) => {
       ) : (
         // <ActivityIndicator/>
         <View>
-          <TouchableOpacity onPress={() => getConversations()}>
-            <Text>Refresh</Text>
-          </TouchableOpacity>
           <InputField placeholder="Search" width="100%" />
+          {listLoading ? (
+        skeletonLoading()
+      ) : (
           <FlatList
             data={conversations}
             keyExtractor={(item: any) => item.id.toString()}
+            extraData={rerender}
+            refreshing={listLoading}
+            onRefresh={() => getConversations()}
             renderItem={({ item }: any) => (
               <TouchableOpacity
                 onPress={() => {
@@ -104,10 +131,10 @@ const Chat = ({ navigation }: any) => {
                   });
                 }}
               >
-                <ListItem item={item} listType={"chats"} />
+                <ListItem item={item} listType={"chats"} unread={unread} />
               </TouchableOpacity>
             )}
-          />
+          />)}
         </View>
       )}
     </View>
