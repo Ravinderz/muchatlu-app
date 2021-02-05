@@ -4,7 +4,6 @@ import {
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
-
   TouchableOpacity,
   View
 } from "react-native";
@@ -39,7 +38,6 @@ const Chat = ({ navigation }: any) => {
     );
 
     const unreadEvent = DeviceEventEmitter.addListener("UNREAD-EVENT", () => {
-      setActiveConversationId("0");
       setUnread(unreadconversationsMessagesCount);
       if (boolObj) {
         setRerender(false);
@@ -50,9 +48,14 @@ const Chat = ({ navigation }: any) => {
       }
     });
 
+    const focus = navigation.addListener("focus", () => {
+      setActiveConversationId("0");
+    });
+
     return () => {
       friendRequestEvent.remove();
       unreadEvent.remove();
+      focus;
     };
   }, []);
 
@@ -108,33 +111,34 @@ const Chat = ({ navigation }: any) => {
         <View>
           <InputField placeholder="Search" width="100%" />
           {listLoading ? (
-        skeletonLoading()
-      ) : (
-          <FlatList
-            data={conversations}
-            keyExtractor={(item: any) => item.id.toString()}
-            extraData={rerender}
-            refreshing={listLoading}
-            onRefresh={() => getConversations()}
-            renderItem={({ item }: any) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setHeaderItem(item);
-                  navigation.navigate("Conversation", {
-                    item: item,
-                    typingItem: {
-                      userIdFrom: "",
-                      userIdTo: "",
-                      isTyping: false,
-                      conversationId: item.id,
-                    },
-                  });
-                }}
-              >
-                <ListItem item={item} listType={"chats"} unread={unread} />
-              </TouchableOpacity>
-            )}
-          />)}
+            skeletonLoading()
+          ) : (
+            <FlatList
+              data={conversations}
+              keyExtractor={(item: any) => item.id.toString()}
+              extraData={rerender}
+              refreshing={listLoading}
+              onRefresh={() => getConversations()}
+              renderItem={({ item }: any) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setHeaderItem(item);
+                    navigation.navigate("Conversation", {
+                      item: item,
+                      typingItem: {
+                        userIdFrom: "",
+                        userIdTo: "",
+                        isTyping: false,
+                        conversationId: item.id,
+                      },
+                    });
+                  }}
+                >
+                  <ListItem item={item} listType={"chats"} unread={unread} />
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </View>
       )}
     </View>

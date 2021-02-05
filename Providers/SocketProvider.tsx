@@ -30,6 +30,7 @@ interface SocketProviderProps {}
 let stompClient: any;
 let isConnected = false;
 let conversationId = "";
+let _appState: string = 'background';
 let Conversations = {};
 
 console.log(stompClient);
@@ -84,9 +85,14 @@ const allSubscriptions = (
         body: `${msg.message}`,
         data: msg,
       };
-      console.log(">>>>>>>>>>>>>>> converstaionId >>>>>>>>> ", conversationId);
       if (conversationId !== msg.conversationId) {
-        triggerNotification(content);
+
+        console.log(">>>>>>>>>>>>>>> inside if of convo id >>>>>>>>> ", conversationId);
+        console.log(">>>>>>>>>>>>>>> _appstate >>>>>>>>> ", _appState);
+        if(_appState === 'active'){
+          triggerNotification(content);
+        }
+        
         let obj: any = unreadconversationsMessagesCount;
         if (!obj) {
           obj = {};
@@ -153,7 +159,7 @@ const connect = (
     allSubscriptions(
       user.id,
       unreadconversationsMessagesCount,
-      setUnreadconversationsMessagesCount
+      setUnreadconversationsMessagesCount      
     );
   });
   // }
@@ -201,6 +207,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     setUnreadconversationsMessagesCount,
   ] = useState({});
   const notificationListener = useRef();
+
   useEffect(() => {
     if (user) {
       connect(
@@ -219,6 +226,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       if (appState.match("background") && value === "active") {
         updateUserPresence(true);
         setAppState("active");
+        _appState = "active";
       }
       if (
         appState.match("active") &&
@@ -226,6 +234,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       ) {
         updateUserPresence(false);
         setAppState("background");
+        _appState = "background";
       }
     });
 
@@ -319,7 +328,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
           isTyping(message);
         },
         setUnreadconversationsMessagesCount: (obj: any) => {
-          console.log("insidne coket setinread", obj);
           setUnreadconversationsMessagesCount(obj);
         },
       }}

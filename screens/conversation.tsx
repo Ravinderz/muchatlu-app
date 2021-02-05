@@ -11,7 +11,7 @@ import { URI } from "./../constants";
 
 let freshData: any;
 
-const Conversation = ({ route }: any) => {
+const Conversation = ({ navigation,route }: any) => {
   const item = route.params.item;
   const [text, setText] = useState("");
   const [count, setCount] = useState(12);
@@ -26,7 +26,6 @@ const Conversation = ({ route }: any) => {
     getConversation();
     setActiveConversationId(item.id);
     let obj = unreadconversationsMessagesCount;
-    console.log(obj)
     obj[item.id] = 0
     console.log(">>>>>>>>>>>>>>>>>>>>>  trigger");
     DeviceEventEmitter.emit("UNREAD-EVENT", "Visited");

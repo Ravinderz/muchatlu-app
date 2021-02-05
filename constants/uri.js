@@ -1,7 +1,7 @@
 const devBaseUrl =  'http://192.168.0.103:8080';
 const prodBaseUrl =  'https://muchatlu-backend.herokuapp.com';
-// const baseUrl = devBaseUrl;
-const baseUrl = prodBaseUrl;
+const baseUrl = devBaseUrl;
+// const baseUrl = prodBaseUrl;
 
 
 const URI = {
