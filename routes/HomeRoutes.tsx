@@ -5,6 +5,7 @@ import ChatHeader from "../components/chatHeader";
 import MainHeader from "../components/mainHeader";
 import Conversation from "../screens/conversation";
 import Profile from "../screens/profile";
+import Test from "../screens/test";
 import Chat from "./../screens/chat";
 import FriendRequest from "./../screens/friend-requests";
 import Friend from "./../screens/friends";
@@ -32,7 +33,7 @@ function HomeStack() {
 
 export const HomeRoutes: React.FC<HomeRoutesProps> = ({}) => {
   return (
-    <Stack.Navigator headerMode="screen">
+    <Stack.Navigator headerMode="screen" initialRouteName="Test">
       <Stack.Screen
         name="Home"
         component={HomeStack}
@@ -51,6 +52,11 @@ export const HomeRoutes: React.FC<HomeRoutesProps> = ({}) => {
       <Stack.Screen
         name="FriendRequestDetail"
         component={Profile}
+        options={{ title: "Friend Profile", headerShown: true }}
+      />
+       <Stack.Screen
+        name="Test"
+        component={Test}
         options={{ title: "Friend Profile", headerShown: true }}
       />
     </Stack.Navigator>

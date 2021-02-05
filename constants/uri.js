@@ -23,7 +23,9 @@ const URI = {
     updateUserDetails:`${baseUrl}/updateUserDetails`,
     filterFriends:`${baseUrl}/filterFriends`,
     socketConnect:`${baseUrl}/chat`,
-    updateUserPushToken:`${baseUrl}/updateUserPushToken`
+    updateUserPushToken:`${baseUrl}/updateUserPushToken`,
+    topTrendingGifs:`https://api.tenor.com/v1/trending?key=I57GO2DEOXJN&media_filter=minimal&limit=10`,
+    searchGifs:`https://api.tenor.com/v1/search?key=I57GO2DEOXJN&q=`
 
 }
 
