@@ -7,9 +7,9 @@ import {
   Text,
   View
 } from "react-native";
+import IMAGES from "../assets/index.js";
+import { URI } from "../constants";
 import { AuthContext } from "../Providers/AuthProvider";
-import IMAGES from "./../assets/index.js";
-import { URI } from "./../constants";
 
 const ChatHeader = (props: any) => {
   //   const item = props.item;

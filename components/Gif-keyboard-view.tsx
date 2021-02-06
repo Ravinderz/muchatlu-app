@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  DeviceEventEmitter,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import InputField from "../components/inputField";
-import { URI } from "./../constants";
+import { URI } from "../constants";
+import InputField from "./inputField";
 
-const Test = () => {
-  const [showModal, setShowModal] = useState(false);
+const GifKeyboardView = () => {
   const [trendingGifs, setTrendingGifs] = useState([]);
   const [searchedGifs, setSearchedGifs] = useState([]);
   const [data, setData] = useState([]);
@@ -28,10 +27,6 @@ const Test = () => {
     return () => {};
   }, []);
 
-  const setModelView = () => {
-    setShowModal(!showModal);
-  };
-
   const searchGifs = async (text: string) => {
     setRefreshingList(true);
     let sameSearch = false;
@@ -42,7 +37,7 @@ const Test = () => {
       if (nextSearchPos) {
         url = `${url}&pos=${nextSearchPos}`;
       }
-    }    
+    }
     try {
       let response = await fetch(`${url}`, {
         headers: {
@@ -62,7 +57,7 @@ const Test = () => {
         setSearchedGifs(json.results);
         setData(json.results);
       }
-      
+
       setRefreshingList(false);
     } catch (error) {
       console.error(error);
@@ -86,13 +81,16 @@ const Test = () => {
 
       let json = await response.json();
       setNextPos(json.next);
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>", json.results.length);
       if (trendingGifs.length !== 0) {
         let obj: any = [...trendingGifs, ...json.results];
         setTrendingGifs(obj);
+        setData(obj);
       } else {
         setTrendingGifs(json.results);
+        setData(json.results);
       }
-      setData(trendingGifs);
+
       setRefreshingList(false);
     } catch (error) {
       console.error(error);
@@ -100,30 +98,25 @@ const Test = () => {
   };
 
   const selectedGif = (item: any) => {
-    console.log(item);
+    DeviceEventEmitter.emit("SELECTED-GIF", {
+      text: item.media[0].gif.url,
+      type: "image-url",
+    });
   };
-
 
   // let timeOutObj:any;
 
   const onTyping = (text: string) => {
-
-
-    console.log(">>>>>>>cleared");
-    console.log(">>>>>>>after clear",timeOutObj);
     clearTimeout(timeOutObj);
-    let obj:any = setTimeout(() => {
+    let obj: any = setTimeout(() => {
       if (text && text.trim() && text.trim().length !== 0) {
         searchGifs(text);
       } else {
         setData(trendingGifs);
         setSearchedGifs([]);
-      }  
-      
+      }
     }, 500);
     setTimeoutObj(obj);
-    console.log(">>>>>>>before clear",timeOutObj);
-    
   };
 
   const refreshList = () => {
@@ -157,11 +150,8 @@ const Test = () => {
     return (
       <View
         style={{
-          position: "absolute",
-          height: "40%",
           width: "100%",
-          left: 0,
-          top: "60%",
+          height: "100%",
           padding: 10,
           backgroundColor: "#b0b0b0",
         }}
@@ -197,60 +187,13 @@ const Test = () => {
     );
   };
 
-  return (
-    <View style={styles.container}>
-      <Text>This is the Test Element</Text>
-      <TouchableOpacity
-        onPress={() => {
-          setModelView();
-          getTrendingGifs();
-        }}
-      >
-        <Text>OPen</Text>
-      </TouchableOpacity>
-      {showModal ? modalView() : <></>}
-    </View>
-    /* <View style={{height:"40%"}}>
-        <Modal
-          animationType="none"
-          transparent={false}
-          visible={showModal}
-          onRequestClose={() => {
-            // this.closeButtonFunction()
-          }}
-        >
-          <View
-            style={{
-              height: "40%",
-              marginTop: "auto",
-              padding: 10,
-              backgroundColor: "#b0b0b0",
-            }}
-          >
-            <View>
-              <Text>This is Half Modal</Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                setModelView();
-              }}
-            >
-              <Text>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
-    </View> */
-  );
+  return <View style={styles.container}>{modalView()}</View>;
 };
 
-export default Test;
+export default GifKeyboardView;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
   },
 });
