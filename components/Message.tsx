@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Providers/AuthProvider";
 
@@ -104,6 +104,7 @@ const Message = ( props: any,) => {
           borderTopLeftRadius: item.userIdFrom === userId ? 15 : 0,
           borderBottomRightRadius: 15,
           borderBottomLeftRadius: 15,
+          marginBottom:-5
         }}
       >
         {renderContent()}
@@ -122,21 +123,21 @@ const Message = ( props: any,) => {
   );
 };
 export default Message;
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    padding: 5,
-    width: "80%",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50 / 2,
-    marginRight: 10,
-    marginLeft: -5,
-  },
-  time: {
-    fontSize: 12,
-    color: "#A4A4A4",
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flexDirection: "row",
+//     padding: 5,
+//     width: "80%",
+//   },
+//   avatar: {
+//     width: 50,
+//     height: 50,
+//     borderRadius: 50 / 2,
+//     marginRight: 10,
+//     marginLeft: -5,
+//   },
+//   time: {
+//     fontSize: 12,
+//     color: "#A4A4A4",
+//   },
+// });

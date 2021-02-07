@@ -72,7 +72,7 @@ const ImgViewHeader = (props: any, {route}:any) => {
         <Text style={{ fontSize: 16, fontWeight: "600" }}>
           {data?.usernameFrom}
         </Text>
-        <Text style={{ fontSize: 16, fontWeight: "600" }}>
+        <Text style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
           {date}
         </Text>
       </View>

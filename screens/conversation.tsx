@@ -57,7 +57,9 @@ const Conversation = ({ navigation, route }: any) => {
     const selectedImageEvent = DeviceEventEmitter.addListener(
       "SELECTED-IMAGE",
       (item: any) => {
-        sendMsg(item);
+        if (item.data) {
+          sendMsg(item);
+        }
       }
     );
 
@@ -225,7 +227,7 @@ const Conversation = ({ navigation, route }: any) => {
             (item?.conversationId + idx).toString()
           }
           renderItem={({ item }: any) => (
-            <Message item={item} listType={"chats"} navigation={navigation}/>
+            <Message item={item} listType={"chats"} navigation={navigation} />
           )}
         />
         <View style={{ flexDirection: "row", alignItems: "center" }}>
