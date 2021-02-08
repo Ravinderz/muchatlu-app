@@ -8,8 +8,6 @@ import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { URI } from "./../constants";
 
-
-
 const skeletonLoading = () => {
   return (
     <>
@@ -56,7 +54,7 @@ const Friend = ({ navigation }: any) => {
           Authorization: `Bearer ${storedToken.token}`,
         },
       });
-  
+
       let json = await response.json();
       if (json.message === "JWT token Expired") {
         setLoading(true);
@@ -73,8 +71,6 @@ const Friend = ({ navigation }: any) => {
   };
 
   const filterFriends = async (text: string) => {
-    console.log(text);
-
     if (!text && text.trim() === "") {
       getFriends();
       return;
@@ -94,11 +90,9 @@ const Friend = ({ navigation }: any) => {
       });
 
       let json = await response.json();
-      console.log("friend json", json);
       if (json.message === "JWT token Expired") {
         setLoading(true);
         refreshToken(user).then(() => {
-          console.log("before the action value caasdf");
           filterFriends(text);
         });
       }
@@ -124,24 +118,25 @@ const Friend = ({ navigation }: any) => {
             }}
             value={text}
           />
-           {listLoading ? (
-        skeletonLoading()
-      ) : (
-          <FlatList
-            data={friends}
-            keyExtractor={(item: any) => item.id.toString()}
-            refreshing={listLoading}
-              onRefresh={() =>  getFriends()}
-            renderItem={({ item }: any) => (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("FriendProfile", { item: item });
-                }}
-              >
-                <ListItem item={item} listType={"friends"} />
-              </TouchableOpacity>
-            )}
-          />)}
+          {listLoading ? (
+            skeletonLoading()
+          ) : (
+            <FlatList
+              data={friends}
+              keyExtractor={(item: any) => item.id.toString()}
+              refreshing={listLoading}
+              onRefresh={() => getFriends()}
+              renderItem={({ item }: any) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("FriendProfile", { item: item });
+                  }}
+                >
+                  <ListItem item={item} listType={"friends"} />
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </View>
       )}
     </View>

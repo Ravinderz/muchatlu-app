@@ -86,7 +86,6 @@ const GifKeyboardView = () => {
 
       let json = await response.json();
       setNextPos(json.next);
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>", json.results.length);
       if (trendingGifs.length !== 0) {
         let obj: any = [...trendingGifs, ...json.results];
         setTrendingGifs(obj);

@@ -25,8 +25,6 @@ const ChatHeader = (props: any) => {
   const [isOnline, setIsOnline] = useState("");
   const [typingItem, setTypingItem] = useState();
 
- 
-
   const getUserPresence = async () => {
     const id = user.id === data.userIdFrom ? data.userIdTo : data.userIdFrom;
     let url = `${URI.getUserPresence}/${id}`;
@@ -46,8 +44,8 @@ const ChatHeader = (props: any) => {
       });
 
       let json = await response.json();
-      if(json.message === "JWT token Expired"){
-        refreshToken(user).then((value:any) => {
+      if (json.message === "JWT token Expired") {
+        refreshToken(user).then((value: any) => {
           getUserPresence();
         });
       }
@@ -63,13 +61,12 @@ const ChatHeader = (props: any) => {
     const loginEvent = DeviceEventEmitter.addListener(
       "LOGIN-EVENT",
       (msg: any) => {
-        console.log("received message here");
         if (msg.userId === data.userIdFrom || msg.userId === data.userIdTo) {
           setIsOnline(msg.online ? "Online" : "Offline");
         }
       }
     );
-  
+
     const logoutEvent = DeviceEventEmitter.addListener(
       "LOGOUT-EVENT",
       (msg: any) => {
@@ -78,7 +75,7 @@ const ChatHeader = (props: any) => {
         }
       }
     );
-  
+
     const typingEvent = DeviceEventEmitter.addListener(
       "TYPING-EVENT",
       (msg: any) => {
@@ -105,7 +102,8 @@ const ChatHeader = (props: any) => {
         </Text>
         <Text style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
           {typingItem &&
-          (typingItem.userIdFrom === data.userIdTo || typingItem.userIdFrom === data.userIdFrom)&&
+          (typingItem.userIdFrom === data.userIdTo ||
+            typingItem.userIdFrom === data.userIdFrom) &&
           typingItem.isTyping
             ? "typing..."
             : isOnline}

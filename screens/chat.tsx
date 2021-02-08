@@ -4,7 +4,6 @@ import {
   DeviceEventEmitter,
   FlatList,
   StyleSheet,
-
   TouchableOpacity,
   View
 } from "react-native";
@@ -77,7 +76,6 @@ const Chat = ({ navigation }: any) => {
         },
       });
 
-      console.log("chat response");
       let json = await response.json();
       if (json.message === "JWT token Expired") {
         setLoading(true);
@@ -109,7 +107,11 @@ const Chat = ({ navigation }: any) => {
         skeletonLoading()
       ) : (
         <View>
-          <InputField placeholder="Search" width="100%" onKeyPress = { (e:any) => {console.log(e)}}/>
+          <InputField
+            placeholder="Search"
+            width="100%"
+            onKeyPress={(e: any) => {}}
+          />
           {listLoading ? (
             skeletonLoading()
           ) : (

@@ -33,7 +33,7 @@
       },
       "useNextNotificationsApi": true,
       "package": "in.Muchatlu.muchatlu",
-      "versionCode": 7
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/notification_icon.png"

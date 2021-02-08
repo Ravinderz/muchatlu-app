@@ -30,11 +30,8 @@ interface SocketProviderProps {}
 let stompClient: any;
 let isConnected = false;
 let conversationId = "";
-let _appState: string = 'background';
+let _appState: string = "background";
 let Conversations = {};
-
-console.log(stompClient);
-// LOG.info("stompCLient :: ",stompClient);
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -52,7 +49,6 @@ const registerForPushNotificationsAsync = async () => {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -79,32 +75,29 @@ const allSubscriptions = (
       let msg = JSON.parse(message.body);
       //setIncomingMessage(msg);
       DeviceEventEmitter.emit("MESSAGE-EVENT", msg);
-      console.log("incoming message");
+
       let content = {
         title: `${msg.usernameFrom}`,
         body: `${msg.message}`,
         data: msg,
       };
       if (conversationId !== msg.conversationId) {
-
-        console.log(">>>>>>>>>>>>>>> inside if of convo id >>>>>>>>> ", conversationId);
-        console.log(">>>>>>>>>>>>>>> _appstate >>>>>>>>> ", _appState);
-        if(_appState === 'active'){
+        if (_appState === "active") {
           triggerNotification(content);
         }
-        
+
         let obj: any = unreadconversationsMessagesCount;
         if (!obj) {
           obj = {};
         }
-        console.log(obj);
+
         if (!unreadconversationsMessagesCount[msg.conversationId]) {
           obj[msg.conversationId] = 1;
         } else {
           obj[msg.conversationId] =
             unreadconversationsMessagesCount[msg.conversationId] + 1;
         }
-        console.log(obj);
+
         setUnreadconversationsMessagesCount(obj);
       }
     }
@@ -159,7 +152,7 @@ const connect = (
     allSubscriptions(
       user.id,
       unreadconversationsMessagesCount,
-      setUnreadconversationsMessagesCount      
+      setUnreadconversationsMessagesCount
     );
   });
   // }
@@ -217,7 +210,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       );
       registerForPushNotificationsAsync().then((token: any) => {
         setExpoPushToken(token);
-        console.log("token ", token);
         updateUserPushToken(token);
       });
     }
@@ -241,7 +233,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const userLogoutEvent = DeviceEventEmitter.addListener(
       "USER-LOGOUT-EVENT",
       (value: boolean) => {
-        console.log("before logout");
         if (stompClient) {
           stompClient.disconnect();
         }

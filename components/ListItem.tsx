@@ -73,8 +73,6 @@ const ListItem = (props: any) => {
       item && item.lastMessageFrom ? true : false
     );
     const countTenPlus = "10+";
-    console.log("showLastMessage", showLastMessage);
-    console.log("unread", unread);
 
     return (
       <View style={styles.container}>
@@ -105,8 +103,8 @@ const ListItem = (props: any) => {
                 style={{
                   color: "#fff",
                   padding: 5,
-                  paddingLeft:10,
-                  paddingRight:10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
                   fontSize: 12,
                 }}
               >

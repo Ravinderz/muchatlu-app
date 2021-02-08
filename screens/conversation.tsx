@@ -39,7 +39,6 @@ const Conversation = ({ navigation, route }: any) => {
     setActiveConversationId(item.id);
     let obj = unreadconversationsMessagesCount;
     obj[item.id] = 0;
-    console.log(">>>>>>>>>>>>>>>>>>>>>  trigger");
     DeviceEventEmitter.emit("UNREAD-EVENT", "Visited");
     setUnreadconversationsMessagesCount(obj);
     const messageEvent = DeviceEventEmitter.addListener(
@@ -83,7 +82,8 @@ const Conversation = ({ navigation, route }: any) => {
   };
 
   const getConversation = async () => {
-    let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
+    //let url = `${URI.getConversation}/${item.userIdFrom}/${item.userIdTo}`;
+    let url = `${URI.getConversationV2}/${item.id}/${user.id}`;
     let tokenObj = await AsyncStorage.getItem("token");
     let storedToken = null;
     if (tokenObj !== null) {

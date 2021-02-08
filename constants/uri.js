@@ -17,6 +17,7 @@ const URI = {
     getConversations:`${baseUrl}/getUserConversations`,
     getConversationId:`${baseUrl}/getConversationId`,
     getConversation:`${baseUrl}/getConversation`,
+    getConversationV2:`${baseUrl}/getConversationV2`,
     getUserDetails:`${baseUrl}/getUserDetails`,
     getUserPresence:`${baseUrl}/getUserOnlinePresence`,
     updateUserPresence:`${baseUrl}/updateUserPresence`,
@@ -25,8 +26,8 @@ const URI = {
     socketConnect:`${baseUrl}/chat`,
     updateUserPushToken:`${baseUrl}/updateUserPushToken`,
     suggestedTrendingGifTerms:`https://api.tenor.com/v1/trending_terms?key=I57GO2DEOXJN&limit=15`,
-    topTrendingGifs:`https://api.tenor.com/v1/trending?key=I57GO2DEOXJN&media_filter=minimal&limit=10`,
-    searchGifs:`https://api.tenor.com/v1/search?key=I57GO2DEOXJN&media_filter=minimal&limit=10&q=`,
+    topTrendingGifs:`https://api.tenor.com/v1/trending?key=I57GO2DEOXJN&contentfilter=medium&media_filter=minimal&limit=10`,
+    searchGifs:`https://api.tenor.com/v1/search?key=I57GO2DEOXJN&contentfilter=medium&media_filter=minimal&limit=10&q=`,
     searchSuggestionsGIF:`https://api.tenor.com/v1/search_suggestions?key=I57GO2DEOXJN&limit=15&q=`,
 
 }
