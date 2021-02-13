@@ -2,7 +2,8 @@ import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { DeviceEventEmitter, Platform } from "react-native";
 
-const MImagePicker = () => {
+const MImagePicker = (props: any) => {
+  const navigation = props.navigation;
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -37,14 +38,14 @@ const MImagePicker = () => {
       base64: true,
     });
 
-    DeviceEventEmitter.emit("SELECTED-IMAGE", {
-      text: "image",
-      type: "image",
-      data: result.base64,
-    });
-
     if (!result.cancelled) {
       setImage(result.uri);
+      navigation.navigate("selectedImage", {
+        img: `data:image/png;base64,${result.base64}`,
+        type: "image",
+        data: result.base64,
+        event: "SELECTED-IMAGE",
+      });
     }
   };
 

@@ -5,12 +5,16 @@ import IMAGES from "../assets/index.js";
 import { AuthContext } from "../Providers/AuthProvider";
 
 const MainHeader = (props: any) => {
-  //   const item = props.item;
+  const navigation = props.navigation;
   const { user, logout } = useContext(AuthContext);
   let temp = user.avatar.split("/");
   let name = temp[temp.length - 1].split(".")[0];
   const imgSrc = IMAGES[name];
   const [showLogout, setShowLogout] = useState(false);
+
+  const showProfile = () => {
+    navigation.navigate("userProfile");
+  }
 
   return (
     <View style={styles.container}>
@@ -19,7 +23,8 @@ const MainHeader = (props: any) => {
       </Text>
       <TouchableOpacity
         onPress={() => {
-          setShowLogout(!showLogout);
+          // setShowLogout(!showLogout);
+          showProfile();
         }}
       >
         <Image
@@ -27,7 +32,7 @@ const MainHeader = (props: any) => {
           style={{ width: 40, height: 40, borderRadius: 20 }}
         />
       </TouchableOpacity>
-      {showLogout ? (
+      {/* {showLogout ? (
         <View
           style={{
             position: "absolute",
@@ -45,7 +50,7 @@ const MainHeader = (props: any) => {
         </View>
       ) : (
         <></>
-      )}
+      )} */}
     </View>
   );
 };

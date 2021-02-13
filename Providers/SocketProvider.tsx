@@ -1,13 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import * as SQLite from "expo-sqlite";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AppState, DeviceEventEmitter, Platform } from "react-native";
 import SockJS from "sockjs-client"; // Note this line
 import Stomp from "stompjs";
 // import { LOG } from "./../components/logger";
 import { URI } from "./../constants";
+import { initializeDB } from "./../db/schemas";
 import { AuthContext } from "./AuthProvider";
+
+const db = SQLite.openDatabase("muchatlu.db");
 
 export const SocketContext = React.createContext<{
   incomingMessage: any;
@@ -65,6 +69,25 @@ const registerForPushNotificationsAsync = async () => {
   return token;
 };
 
+const getConversationId = (obj:any) => {
+  db.transaction((tx) => {
+    tx.executeSql(
+      "select id from conversation where user_id_from = ? and user_id_to = ?",
+      [
+        obj.userIdTo,
+        obj.userIdFrom
+      ],
+      (txObj, resultSet) => {
+        console.log("convo id data result set ", resultSet);
+      },
+      (txObj, error:any) => {
+        console.log(error);
+        return error;
+      }
+    );
+  });
+}
+
 const allSubscriptions = (
   id: number,
   unreadconversationsMessagesCount: any,
@@ -74,8 +97,10 @@ const allSubscriptions = (
     if (message.body) {
       let msg = JSON.parse(message.body);
       //setIncomingMessage(msg);
-      DeviceEventEmitter.emit("MESSAGE-EVENT", msg);
 
+      // insertMessage(msg);
+      DeviceEventEmitter.emit("MESSAGE-EVENT", msg);
+      
       let content = {
         title: `${msg.usernameFrom}`,
         body: `${msg.message}`,
@@ -212,6 +237,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         setExpoPushToken(token);
         updateUserPushToken(token);
       });
+
+      initializeDB();
     }
 
     AppState.addEventListener("change", (value: any) => {

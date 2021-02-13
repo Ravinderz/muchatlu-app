@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import * as SQLite from "expo-sqlite";
 import React, { useContext, useState } from "react";
 import {
   AsyncStorage,
@@ -12,6 +13,8 @@ import {
 import { AuthContext } from "../Providers/AuthProvider";
 import IMAGES from "./../assets/index.js";
 import { URI } from "./../constants";
+
+const db = SQLite.openDatabase("muchatlu.db");
 
 const adjustForTimezone = (value: Date) => {
   if (value) {
@@ -162,6 +165,20 @@ const ListItem = (props: any) => {
               updateFriendRequest(status);
             });
           }
+          // if(json.userIdFrom === user.id){
+          //   insertConversation(json);
+          // }else{
+          //   let obj = json;
+          //   obj.userIdFrom = json.userIdTo;
+          //   obj.userIdTo = json.userIdFrom;
+          //   obj.usernameFrom = json.usernameTo;
+          //   obj.usernameTo = json.usernameFrom;
+          //   obj.avatarFrom = json.avatarTo;
+          //   obj.avatarTo = json.avatarFrom;
+          //   insertConversation(obj);
+          // }
+
+          
           DeviceEventEmitter.emit("FRIEND-REQUEST-UPDATE-EVENT", json);
         }
         return json;

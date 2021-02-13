@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   DeviceEventEmitter,
   Keyboard,
   KeyboardAvoidingView,
@@ -35,6 +36,7 @@ const Conversation = ({ navigation, route }: any) => {
   } = useContext(SocketContext);
 
   useEffect(() => {
+    setLoading(true);
     getConversation();
     setActiveConversationId(item.id);
     let obj = unreadconversationsMessagesCount;
@@ -152,6 +154,7 @@ const Conversation = ({ navigation, route }: any) => {
 
     if (msgObj.text && msgObj.text.trim() !== "" && msgObj.text !== "") {
       sendMessage(obj);
+      // insertMessage(obj)
       let temp: any;
       if (data.length > 0) {
         temp = [...data, obj];
@@ -212,24 +215,32 @@ const Conversation = ({ navigation, route }: any) => {
         keyboardVerticalOffset={-500}
         style={{ flex: 1, backgroundColor: "#fff" }}
       >
-        <FlatList
-          style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
-          ref={scrollRef}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={30}
-          // inverted={true}
-          // contentContainerStyle={{ flexDirection: 'column-reverse' }}
-          onContentSizeChange={() =>
-            scrollRef.current?.scrollToEnd({ animated: false })
-          }
-          data={data}
-          keyExtractor={(item: any, idx) =>
-            (item?.conversationId + idx).toString()
-          }
-          renderItem={({ item }: any) => (
-            <Message item={item} listType={"chats"} navigation={navigation} />
-          )}
-        />
+        {loading ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size="large" color="#6159E6" />
+          </View>
+        ) : (
+          <FlatList
+            style={{ height: "90%", paddingLeft: 10, paddingRight: 10 }}
+            ref={scrollRef}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={30}
+            // inverted={true}
+            // contentContainerStyle={{ flexDirection: 'column-reverse' }}
+            onContentSizeChange={() =>
+              scrollRef.current?.scrollToEnd({ animated: false })
+            }
+            data={data}
+            keyExtractor={(item: any, idx) =>
+              (item?.conversationId + idx).toString()
+            }
+            renderItem={({ item }: any) => (
+              <Message item={item} listType={"chats"} navigation={navigation} />
+            )}
+          />
+        )}
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => toggleModel()}>
             <MaterialCommunityIcons
@@ -275,8 +286,8 @@ const Conversation = ({ navigation, route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      {showModel ? <GifKeyboardView /> : <></>}
-      <MImagePicker />
+      {showModel ? <GifKeyboardView navigation={navigation} /> : <></>}
+      <MImagePicker navigation={navigation} />
     </View>
   );
 };

@@ -6,6 +6,8 @@ import ImgViewHeader from "../components/imgViewHeader";
 import MainHeader from "../components/mainHeader";
 import Conversation from "../screens/conversation";
 import Profile from "../screens/profile";
+import SelectedImageView from "../screens/selected-image-view";
+import UserProfile from "../screens/user-profile";
 import Chat from "./../screens/chat";
 import FriendRequest from "./../screens/friend-requests";
 import Friend from "./../screens/friends";
@@ -39,33 +41,42 @@ export const HomeRoutes: React.FC<HomeRoutesProps> = ({}) => {
       <Stack.Screen
         name="Home"
         component={HomeStack}
-        options={{ headerTitle: (props) => <MainHeader {...props} /> }}
+        options={({ navigation, route }) => ({
+          headerTitle: (props) => (
+            <MainHeader {...props} navigation={navigation} />
+          ),
+        })}
       />
       <Stack.Screen
         name="Conversation"
         component={Conversation}
-        options={{ headerTitle: (props) => <ChatHeader {...props} /> }}
+        options={({ navigation }) => ({
+          headerTitle: (props) => (
+            <ChatHeader {...props} navigation={navigation} />
+          ),
+        })}
       />
       <Stack.Screen
         name="ImageView"
         component={MImageView}
         options={({ route }) => ({
-          // headerTintColor: '#fff',
-          // headerStyle: {
-          //   backgroundColor: '#1E79C5',
-          //   height: 100,
-          // },
-          // headerTitleAlign: 'center',
-          // headerTitleStyle: {
-          //   fontWeight: 'bold',
-          // },
           headerTitle: (props) => <ImgViewHeader {...props} route={route} />,
         })}
+      />
+      <Stack.Screen
+        name="selectedImage"
+        component={SelectedImageView}
+        options={{ title: "", headerShown: true }}
       />
       <Stack.Screen
         name="FriendProfile"
         component={Profile}
         options={{ title: "Friend Profile", headerShown: true }}
+      />
+      <Stack.Screen
+        name="userProfile"
+        component={UserProfile}
+        options={{ title: "Profile", headerShown: true }}
       />
       <Stack.Screen
         name="FriendRequestDetail"

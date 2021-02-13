@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SQLite from "expo-sqlite";
 import React, { useContext, useEffect, useState } from "react";
 import {
   DeviceEventEmitter,
@@ -13,6 +14,9 @@ import ListItemSkeleton from "../components/ListItemSkeleton";
 import { AuthContext } from "../Providers/AuthProvider";
 import { SocketContext } from "../Providers/SocketProvider";
 import { URI } from "./../constants";
+
+const db = SQLite.openDatabase("muchatlu.db");
+
 let boolObj = false;
 const Chat = ({ navigation }: any) => {
   const [conversations, setConversations] = useState([]);
@@ -28,11 +32,13 @@ const Chat = ({ navigation }: any) => {
 
   useEffect(() => {
     getConversations();
+    // getAllConversations();
     setActiveConversationId("0");
     setUnread(unreadconversationsMessagesCount);
     const friendRequestEvent = DeviceEventEmitter.addListener(
       "FRIEND-REQUEST-UPDATE-EVENT",
       () => {
+        // getAllConversations();
         getConversations();
       }
     );
@@ -58,6 +64,26 @@ const Chat = ({ navigation }: any) => {
       focus;
     };
   }, []);
+
+  const getAllConversations = () => {
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        "select t.id as id,t.user_id_from as userIdFrom,t.username_from as usernameFrom,t.avatar_from as avatarFrom,t.user_id_to as userIdTo,t.username_to as usernameTo,t.avatar_to as avatarTo,msg.message as lastMessage,msg.username_from as lastMessageFrom,msg.timestamp as lastMessageTimestamp from (select c.id,c.avatar_from,c.avatar_to,c.user_id_from,c.user_id_to,c.username_from,c.username_to,coalesce(max(m.id),0) msg_id from conversation c left join message m on c.id = m.conversation_id where c.user_id_from = ? group by c.id,c.avatar_from,c.avatar_to) t left join message msg on t.msg_id = msg.id",
+        [user.id],
+        (txObj, resultSet: any) => {
+          console.log(">>>>>> inside chat component", resultSet);
+          setConversations(resultSet.rows._array);
+          setLoading(false);
+          setlistLoading(false);
+        },
+        (txObj, error: any) => {
+          console.log(error);
+          return error;
+        }
+      );
+    });
+  };
 
   const getConversations = async () => {
     setlistLoading(true);

@@ -15,6 +15,7 @@ export type User = null | {
 export const AuthContext = React.createContext<{
   user: User;
   headerItem: any;
+
   login: (email: string, password: string) => void;
   logout: () => void;
   refreshToken: (user: User) => any;
@@ -22,6 +23,7 @@ export const AuthContext = React.createContext<{
 }>({
   user: null,
   headerItem: null,
+
   login: () => {},
   logout: () => {},
   refreshToken: () => {},
@@ -121,6 +123,7 @@ const getUserFromStorage = async () => {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
   const [headerItem, setHeaderItem] = useState<any>(null);
+  const [realm, setRealm] = useState<any>(null);
 
   const logout = async () => {
     let tokenObj = await AsyncStorage.getItem("token");
@@ -154,9 +157,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    getUserFromStorage().then((value:User) => {
+    getUserFromStorage().then((value: User) => {
       setUser(value);
-    })
+    });
     return () => {};
   }, []);
 

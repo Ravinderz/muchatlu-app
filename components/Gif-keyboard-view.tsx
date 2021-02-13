@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  DeviceEventEmitter,
+
   Image,
   StyleSheet,
   Text,
@@ -12,7 +12,8 @@ import { FlatList } from "react-native-gesture-handler";
 import { URI } from "../constants";
 import InputField from "./inputField";
 
-const GifKeyboardView = () => {
+const GifKeyboardView = (props: any) => {
+  const navigation = props.navigation;
   const [trendingGifs, setTrendingGifs] = useState([]);
   const [trendingSuggestions, setTrendingSuggestions] = useState([]);
   const [searchedGifs, setSearchedGifs] = useState([]);
@@ -146,10 +147,13 @@ const GifKeyboardView = () => {
   };
 
   const selectedGif = (item: any) => {
-    DeviceEventEmitter.emit("SELECTED-GIF", {
-      text: item.media[0].gif.url,
-      type: "image-url",
-    });
+
+    navigation.navigate("selectedImage",{
+      img:item.media[0].gif.url,
+      type:"image-url",
+      event:"SELECTED-GIF"
+    })
+
   };
 
   // let timeOutObj:any;
