@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from 'expo';
 import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -35,7 +36,7 @@ export default function Login({ navigation, route }: AuthNavProps<"Login">) {
   useEffect(() => {
     getUserFromStorage();
     // setLoading(false);
-    return () => {};
+    return () => { };
   }, []);
 
   return (

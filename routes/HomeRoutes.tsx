@@ -13,7 +13,7 @@ import FriendRequest from "./../screens/friend-requests";
 import Friend from "./../screens/friends";
 import MImageView from "./../screens/image-view";
 
-interface HomeRoutesProps {}
+interface HomeRoutesProps { }
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -21,11 +21,11 @@ const Tab = createMaterialTopTabNavigator();
 function HomeStack() {
   return (
     <Tab.Navigator
-      tabBarOptions={{
-        activeTintColor: "#6159E6",
-        inactiveTintColor: "#bfbfbf",
-        labelStyle: { fontWeight: "700" },
-        indicatorStyle: { backgroundColor: "#6159E6" },
+      screenOptions={{
+        tabBarActiveTintColor: "#6159E6",
+        tabBarInactiveTintColor: "#bfbfbf",
+        tabBarLabelStyle: { fontWeight: "700" },
+        tabBarIndicatorStyle: { backgroundColor: "#6159E6" },
       }}
     >
       <Tab.Screen name="Chats" component={Chat} />
@@ -35,9 +35,9 @@ function HomeStack() {
   );
 }
 
-export const HomeRoutes: React.FC<HomeRoutesProps> = ({}) => {
+export const HomeRoutes: React.FC<HomeRoutesProps> = ({ }) => {
   return (
-    <Stack.Navigator headerMode="screen">
+    <Stack.Navigator>
       <Stack.Screen
         name="Home"
         component={HomeStack}
