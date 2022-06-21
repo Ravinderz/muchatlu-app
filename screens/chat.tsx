@@ -136,7 +136,7 @@ const Chat = ({ navigation }: any) => {
           <InputField
             placeholder="Search"
             width="100%"
-            onKeyPress={(e: any) => {}}
+            onKeyPress={(e: any) => { }}
           />
           {listLoading ? (
             skeletonLoading()
