@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -118,6 +118,7 @@ const Conversation = ({ navigation, route }: any) => {
   const sendMsg = (msgObj: any) => {
     let date = new Date();
     let obj;
+    console.log(msgObj);
     if (user.id === item.userIdFrom) {
       obj = {
         userIdFrom: user.id,
@@ -243,7 +244,7 @@ const Conversation = ({ navigation, route }: any) => {
         )}
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => toggleModel()}>
-            <MaterialCommunityIcons
+            <MaterialIcons
               name="gif"
               size={30}
               color="#6159E6"

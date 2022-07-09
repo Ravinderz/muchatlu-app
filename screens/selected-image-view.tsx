@@ -6,12 +6,12 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const SelectedImageView = ({ navigation, route }: any) => {
   const img = route.params.img;
   const type = route.params.type;
-  const event = route.params.type;
+  const event = route.params.event;
   const data = route.params.data;
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    return () => {};
+    return () => { };
   }, []);
 
   const sendMsg = () => {
